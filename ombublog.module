@@ -1,0 +1,247 @@
+<?php
+// $id$
+
+/**
+ * @file
+ * OMBU Blog Module
+ *
+ * Provides single-blog functionality for a drupal site. Features include:
+ *   - Tags, tagging via taxonomy
+ *   - Blog-only search.  Set OMBUBLOG_SEARCH to TRUE to enable
+ *       To disable the normal search module callbacks (/search/node, /search/user), place
+ *       the following code in a hook_menu_alter() function:
+ *         unset($items['search/user/%menu_tail']);
+ *         unset($items['search/node/%menu_tail']);
+ *         unset($items['search']);
+ */
+
+/****
+ * Constants
+ */
+define('OMBUBLOG_BASE_PATH', 'blog'); // Base url stem for blog functionality
+define('OMBUBLOG_SEARCH', TRUE); // Enable/Disable blog searching
+
+
+/****
+ * Includes
+ */
+if (OMBUBLOG_SEARCH) {
+    require_once(dirname(__FILE__). '/ombublog.search.inc');
+}
+
+
+/****
+ * Module Hooks
+ */
+
+/**
+ * Implementation of hook_views_api()
+ */
+function ombublog_views_api() {
+    return array('api' => 2.0);
+}
+
+/**
+ * Implementation of hook_menu()
+ */
+function ombublog_menu() {
+    $items = array();
+
+    if (OMBUBLOG_SEARCH) {
+        $items[OMBUBLOG_BASE_PATH .'/search'] = array(
+          'page callback' => 'ombublog_search_view',
+          'access callback' => TRUE,
+          'type' => MENU_CALLBACK,
+        );
+        $items[OMBUBLOG_BASE_PATH .'/search/%menu_tail'] = array(
+          'page callback' => 'ombublog_search_view',
+          'access callback' => TRUE,
+          'type' => MENU_CALLBACK,
+        );
+    }
+
+    $items[OMBUBLOG_BASE_PATH] = array(
+        'page callback' => 'ombublog_view_by_date',
+        'page arguments' => array(1, 2),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    $items[OMBUBLOG_BASE_PATH .'/tag/%'] = array(
+        'page callback' => 'ombublog_view_by_tags',
+        'page arguments' => array(2),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+/**
+ * Implementation of hook_block()
+ */
+function ombublog_block($op = 'list', $delta = 0, $edit = array()) {
+
+    if ($op == 'list') {
+
+        $blocks['archive_list'] = array(
+            'info' => t('OMBU Blog Archive list'),
+            'cache' => BLOCK_CACHE_GLOBAL,
+        );
+
+        if (OMBUBLOG_SEARCH) {
+            $blocks['search'] = array(
+                'info' => t('OMBU Blog Search Form'),
+                'cache' => BLOCK_NO_CACHE,
+            );
+        }
+
+        return $blocks;
+    }
+    elseif ($op == 'view') {
+
+        $block = array();
+        switch ($delta) {
+
+            case 'archive_list':
+                $block['subject'] = t('Archives');
+                $block['content'] = ombublog_block_archive_list();
+                break;
+
+            case 'search':
+                $block['subject'] = t('Search');
+                $block['content'] = drupal_get_form('ombublog_search_form');
+                break;
+        }
+        return $block;
+    }
+}
+
+/**
+ * Provides list of links, by month, to archived posts
+ */
+function ombublog_block_archive_list() {
+
+    $query = <<<QUERY
+SELECT DISTINCT
+    YEAR(FROM_UNIXTIME(created)) as year,
+    MONTH(FROM_UNIXTIME(created)) as month
+FROM {node}
+WHERE
+    type = '%s' AND
+    status <> 0
+ORDER BY
+    year DESC,
+    month DESC
+QUERY;
+
+    $content = array();
+    $results = db_query($query, 'blog_post');
+    while($r = db_fetch_array($results)) {
+        $text = date("F", mktime(0, 0, 0, $r['month'], date("d"), date("Y")));
+        if ($r['year'] != date("Y")) {
+            $text .= ' '. $r['year'];
+        }
+
+        $content[] = l($text, OMBUBLOG_BASE_PATH .'/'. $r['year'] .'/'. sprintf('%02d', $r['month']));
+    }
+
+    if (count($content)) {
+        return '<ul><li>'. implode('</li><li>', $content) .'</li></ul>';
+    }
+    else {
+        return '';
+    }
+}
+
+/****
+ * Menu Callbacks
+ */
+
+ /**
+  * Main Blog Page, can filter by date
+  *   blog/2010
+  *   blog/2010/08
+  */
+function ombublog_view_by_date($year = NULL, $month = NULL) {
+
+    $args = array();
+    if ($year) {
+        $args[] = $year;
+    }
+    if ($month) {
+        $args[] = $month;
+    }
+
+    if ($month) {
+        drupal_set_title(t("Posts from ") . date("F, Y", mktime(0, 0, 0, $month, date("d"), $year)));
+    }
+    elseif ($year) {
+        drupal_set_title(t("Posts from ") . $year);
+    }
+
+    $view = views_get_view('ombublog');
+    $view->set_display('blog_by_date');
+    $view->pre_execute($args);
+    $view->execute();
+
+    return $view->render();
+
+}
+
+ /**
+  * Blog posts filtered by tags
+  *   blog/tag/{term_id}
+  */
+function ombublog_view_by_tags($tids) {
+
+    $args = array($tids);
+    $tids = trim($tids);
+    $operator = '';
+
+    // Multiples by AND (Ex: 4,5)
+    if (strpos($tids, ',') != FALSE) {
+        $operator = ' and ';
+        $tids = explode(',', $tids);
+    }
+    // Multiples by OR (Ex: 4+5)
+    elseif (strpos($tids, ' ') != FALSE) {
+        $operator = ' or ';
+        $tids = explode(' ', $tids);
+    }
+    // Single tid (Ex: 4)
+    else {
+        $tids = array($tids);
+    }
+
+    $terms = array();
+    foreach ($tids as $tid) {
+        $term = taxonomy_get_term($tid);
+        $terms[] = '<em>'. $term->name .'</em>';
+    }
+
+    if (count($terms) > 2) {
+        $title = t("Posts tagged with ");
+        $last_term = array_pop($terms);
+        $title .= implode(', ', $terms) . $operator . $last_term;
+    }
+    else {
+        $title = t("Posts tagged with ") . implode($operator, $terms);
+    }
+    drupal_set_title($title);
+
+    $view = views_get_view('ombublog');
+    $view->set_display('blog_by_tags');
+    $view->pre_execute($args);
+    $view->execute();
+
+    return $view->render();
+
+}
+
+function ombublog_cron() {
+
+    // Delete orphaned blog tags
+    $ombublog_tags_vid = variable_get('ombublog_tags_vid', 1);
+    db_query("DELETE FROM td USING {term_data} td LEFT JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.tid IS NULL AND td.vid = %d", $ombublog_tags_vid);
+}

@@ -1,0 +1,46 @@
+<?php
+
+$content['type']  = array (
+  'name' => 'Blog Post',
+  'type' => 'blog_post',
+  'description' => 'A post in the blog.',
+  'title_label' => 'Title',
+  'body_label' => 'Body',
+  'min_word_count' => '0',
+  'help' => '',
+  'node_options' => 
+  array (
+    'status' => true,
+    'promote' => false,
+    'sticky' => false,
+    'revision' => false,
+  ),
+  'upload' => '0',
+  'old_type' => 'blog_post',
+  'orig_type' => '',
+  'module' => 'node',
+  'custom' => '1',
+  'modified' => '1',
+  'locked' => '0',
+  'comment' => '2',
+  'comment_default_mode' => '2',
+  'comment_default_order' => '2',
+  'comment_default_per_page' => '300',
+  'comment_controls' => '3',
+  'comment_anonymous' => '2',
+  'comment_subject_field' => '0',
+  'comment_preview' => '0',
+  'comment_form_location' => '1',
+);
+$content['extra']  = array (
+  'title' => '-5',
+  'body_field' => '-4',
+  'revision_information' => '0',
+  'author' => '-1',
+  'options' => '1',
+  'comment_settings' => '4',
+  'menu' => '-2',
+  'taxonomy' => '-3',
+  'path' => '3',
+  'xmlsitemap' => '2',
+);

@@ -1,0 +1,11 @@
+; $Id$
+name = "OMBU Blog"
+description = "Basic blog functionality for a Drupal site"
+dependencies[] = content
+dependencies[] = content_copy
+dependencies[] = search
+dependencies[] = taxonomy
+dependencies[] = pathauto
+package = 'OMBU'
+core = 6.x
+php = 5.1
