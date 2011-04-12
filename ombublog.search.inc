@@ -4,6 +4,8 @@
 /**
  * @file
  * Exposes search forms & callbacks for blog posts at the url /blog/search
+ *
+ * @todo: this can be converted to strictly views.
  */
 
 /**
@@ -14,6 +16,7 @@
 function ombublog_search_view() {
   drupal_set_title('Search the blog');
   $type = 'node';
+
   // Search form submits with POST but redirects to GET. This way we can keep
   // the search query URL clean as a whistle:
   // blog/search/keyword+keyword
@@ -56,7 +59,6 @@ function ombublog_search_view() {
  *   An HTML string containing the search form.
  */
 function ombublog_search_form(&$form_state, $keys = '') {
-
   // Add CSS
   drupal_add_css(drupal_get_path('module', 'search') .'/search.css', 'module', 'all', FALSE);
 
