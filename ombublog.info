@@ -2,8 +2,18 @@ name = "OMBU Blog"
 description = "Basic blog functionality for a Drupal site"
 package = 'OMBU'
 core = 7.x
-php = 5.1
+version = "7.x-0.1"
 
 dependencies[] = search
 dependencies[] = taxonomy
 dependencies[] = pathauto
+dependencies[] = "features"
+dependencies[] = "views"
+
+features[ctools][] = "views:views_default:3.0"
+features[field][] = "node-blog_post-body"
+features[field][] = "node-blog_post-field_tags"
+features[node][] = "blog_post"
+features[taxonomy][] = "tags"
+features[views_view][] = "ombublog"
+features[views_view][] = "ombublog_tags"
