@@ -1,15 +1,10 @@
-name = "OMBU Blog"
-description = "Basic blog functionality for a Drupal site"
-package = 'OMBU'
-core = 7.x
-version = "7.x-0.1"
-
-dependencies[] = search
-dependencies[] = taxonomy
-dependencies[] = pathauto
+core = "7.x"
 dependencies[] = "features"
+dependencies[] = "pathauto"
+dependencies[] = "search"
+dependencies[] = "taxonomy"
 dependencies[] = "views"
-
+description = "Basic blog functionality for a Drupal site"
 features[ctools][] = "views:views_default:3.0"
 features[field][] = "node-blog_post-body"
 features[field][] = "node-blog_post-field_tags"
@@ -17,3 +12,7 @@ features[node][] = "blog_post"
 features[taxonomy][] = "tags"
 features[views_view][] = "ombublog"
 features[views_view][] = "ombublog_tags"
+name = "OMBU Blog"
+package = "OMBU"
+php = "5.2.4"
+version = "7.x-0.1"

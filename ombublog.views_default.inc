@@ -58,41 +58,66 @@ function ombublog_views_default_views() {
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
 
   /* Display: Blog Homepage */
-  $handler = $view->new_display('block', 'Blog Homepage', 'blog_by_date');
+  $handler = $view->new_display('page', 'Blog Homepage', 'blog_by_date');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Blog';
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Content: Created year */
-  $handler->display->display_options['arguments']['created_year']['id'] = 'created_year';
-  $handler->display->display_options['arguments']['created_year']['table'] = 'node';
-  $handler->display->display_options['arguments']['created_year']['field'] = 'created_year';
-  $handler->display->display_options['arguments']['created_year']['exception']['title_enable'] = 1;
-  $handler->display->display_options['arguments']['created_year']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['created_year']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['created_year']['specify_validation'] = 1;
-  /* Contextual filter: Content: Created month */
-  $handler->display->display_options['arguments']['created_month']['id'] = 'created_month';
-  $handler->display->display_options['arguments']['created_month']['table'] = 'node';
-  $handler->display->display_options['arguments']['created_month']['field'] = 'created_month';
-  $handler->display->display_options['arguments']['created_month']['exception']['title_enable'] = 1;
-  $handler->display->display_options['arguments']['created_month']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['created_month']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['created_month']['specify_validation'] = 1;
+  /* Contextual filter: Content: Created year + month */
+  $handler->display->display_options['arguments']['created_year_month']['id'] = 'created_year_month';
+  $handler->display->display_options['arguments']['created_year_month']['table'] = 'node';
+  $handler->display->display_options['arguments']['created_year_month']['field'] = 'created_year_month';
+  $handler->display->display_options['arguments']['created_year_month']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['created_year_month']['title'] = 'Posts from %1';
+  $handler->display->display_options['arguments']['created_year_month']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['created_year_month']['default_argument_skip_url'] = 0;
+  $handler->display->display_options['arguments']['created_year_month']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['created_year_month']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['created_year_month']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['path'] = 'blog';
 
   /* Display: Blog Posts by Tag */
-  $handler = $view->new_display('block', 'Blog Posts by Tag', 'blog_by_tags');
+  $handler = $view->new_display('page', 'Blog Posts by Tag', 'blog_by_tags');
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Content: Has taxonomy term ID */
-  $handler->display->display_options['arguments']['tid']['id'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
-  $handler->display->display_options['arguments']['tid']['field'] = 'tid';
-  $handler->display->display_options['arguments']['tid']['exception']['title_enable'] = 1;
-  $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
-  $handler->display->display_options['arguments']['tid']['break_phrase'] = 1;
-  $handler->display->display_options['arguments']['tid']['add_table'] = 0;
-  $handler->display->display_options['arguments']['tid']['require_value'] = 0;
-  $handler->display->display_options['arguments']['tid']['reduce_duplicates'] = 1;
-  $handler->display->display_options['arguments']['tid']['set_breadcrumb'] = 0;
+  /* Contextual filter: Content: Tags (field_tags) - tid */
+  $handler->display->display_options['arguments']['field_tags_tid']['id'] = 'field_tags_tid';
+  $handler->display->display_options['arguments']['field_tags_tid']['table'] = 'field_data_field_tags';
+  $handler->display->display_options['arguments']['field_tags_tid']['field'] = 'field_tags_tid';
+  $handler->display->display_options['arguments']['field_tags_tid']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['field_tags_tid']['title'] = 'Posts tagged with %1';
+  $handler->display->display_options['arguments']['field_tags_tid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['field_tags_tid']['default_argument_skip_url'] = 0;
+  $handler->display->display_options['arguments']['field_tags_tid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['field_tags_tid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['field_tags_tid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['field_tags_tid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['field_tags_tid']['validate']['type'] = 'taxonomy_term';
+  $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['vocabularies'] = array(
+    'tags' => 'tags',
+    'department' => 0,
+  );
+  $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['type'] = 'tids';
+  $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['transform'] = 0;
+  $handler->display->display_options['arguments']['field_tags_tid']['break_phrase'] = 0;
+  $handler->display->display_options['arguments']['field_tags_tid']['not'] = 0;
+  $handler->display->display_options['path'] = 'blog/tags';
+
+  /* Display: Archive Block */
+  $handler = $view->new_display('block', 'Archive Block', 'block_1');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Archives';
+  $handler->display->display_options['defaults']['arguments'] = FALSE;
+  /* Contextual filter: Content: Created year + month */
+  $handler->display->display_options['arguments']['created_year_month']['id'] = 'created_year_month';
+  $handler->display->display_options['arguments']['created_year_month']['table'] = 'node';
+  $handler->display->display_options['arguments']['created_year_month']['field'] = 'created_year_month';
+  $handler->display->display_options['arguments']['created_year_month']['default_action'] = 'summary';
+  $handler->display->display_options['arguments']['created_year_month']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['created_year_month']['default_argument_skip_url'] = 0;
+  $handler->display->display_options['arguments']['created_year_month']['summary']['sort_order'] = 'desc';
+  $handler->display->display_options['arguments']['created_year_month']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['created_year_month']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['created_year_month']['summary_options']['count'] = FALSE;
+  $handler->display->display_options['arguments']['created_year_month']['summary_options']['items_per_page'] = '25';
   $translatables['ombublog'] = array(
     t('Defaults'),
     t('more'),
@@ -106,7 +131,12 @@ function ombublog_views_default_views() {
     t('Offset'),
     t('All'),
     t('Blog Homepage'),
+    t('Blog'),
+    t('Posts from %1'),
     t('Blog Posts by Tag'),
+    t('Posts tagged with %1'),
+    t('Archive Block'),
+    t('Archives'),
   );
   $export['ombublog'] = $view;
 
@@ -114,7 +144,7 @@ function ombublog_views_default_views() {
   $view->name = 'ombublog_tags';
   $view->description = 'Ombu Blog Tags';
   $view->tag = '';
-  $view->base_table = 'term_data';
+  $view->base_table = 'taxonomy_term_data';
   $view->human_name = 'ombublog_tags';
   $view->core = 0;
   $view->api_version = '3.0-alpha1';
@@ -170,7 +200,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['filters']['vid']['table'] = 'taxonomy_term_data';
   $handler->display->display_options['filters']['vid']['field'] = 'vid';
   $handler->display->display_options['filters']['vid']['value'] = array(
-    1 => '1',
+    2 => '2',
   );
   $handler->display->display_options['filters']['vid']['expose']['operator'] = FALSE;
 

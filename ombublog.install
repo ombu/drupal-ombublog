@@ -10,6 +10,7 @@
  * Implementation of hook_install
  */
 function ombublog_install() {
-  // Set pathauto pattern for blog posts
-  variable_set('pathauto_node_blog_post_pattern', 'blog/[yyyy]/[mm]/[dd]/[title-raw]');
+  // Set pathauto pattern for blog posts and tags
+  variable_set('pathauto_node_blog_post_pattern', 'blog/[node:created:custom:Y]/[node:created:custom:m]/[node:created:custom:d]/[node:title]');
+  variable_set('pathauto_taxonomy_term_tags_pattern', 'blog/[term:vocabulary]/[term:tid]');
 }

@@ -40,15 +40,8 @@ if (OMBUBLOG_SEARCH) {
  */
 function ombublog_cron() {
   // Delete orphaned blog tags
-  $ombublog_tags_vid = variable_get('ombublog_tags_vid', 1);
-  db_query("DELETE FROM td USING {term_data} td LEFT JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.tid IS NULL AND td.vid = %d", $ombublog_tags_vid);
-}
-
-/**
- * Implements hook_views_api().
- */
-function ombublog_views_api() {
-  return array('api' => 2.0);
+  //$ombublog_tags_vid = variable_get('ombublog_tags_vid', 1);
+  //db_query("DELETE FROM td USING {term_data} td LEFT JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.tid IS NULL AND td.vid = %d", $ombublog_tags_vid);
 }
 
 /**
@@ -70,20 +63,6 @@ function ombublog_menu() {
     );
   }
 
-  $items[OMBUBLOG_BASE_PATH] = array(
-    'page callback' => 'ombublog_view_by_date',
-    'page arguments' => array(1, 2),
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-
-  $items[OMBUBLOG_BASE_PATH . '/tag/%'] = array(
-    'page callback' => 'ombublog_view_by_tags',
-    'page arguments' => array(2),
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-
   return $items;
 }
 
@@ -93,13 +72,13 @@ function ombublog_menu() {
 function ombublog_block_info() {
   $blocks['archive_list'] = array(
     'info' => t('OMBU Blog Archive list'),
-    'cache' => BLOCK_CACHE_GLOBAL,
+    'cache' => DRUPAL_CACHE_GLOBAL,
   );
 
   if (OMBUBLOG_SEARCH) {
     $blocks['search'] = array(
       'info' => t('OMBU Blog Search Form'),
-      'cache' => BLOCK_NO_CACHE,
+      'cache' => DRUPAL_NO_CACHE,
     );
   }
 
@@ -113,11 +92,6 @@ function ombublog_block_view($delta = 0) {
   $block = array();
 
   switch ($delta) {
-    case 'archive_list':
-      $block['subject'] = t('Archives');
-      $block['content'] = ombublog_block_archive_list();
-      break;
-
     case 'search':
       $block['subject'] = t('Search');
       $block['content'] = drupal_get_form('ombublog_search_form');
@@ -125,125 +99,4 @@ function ombublog_block_view($delta = 0) {
   }
 
   return $block;
-}
-
-/**
- * Provides list of links, by month, to archived posts.
- */
-function ombublog_block_archive_list() {
-    $query = <<<QUERY
-SELECT DISTINCT
-    YEAR(FROM_UNIXTIME(created)) as year,
-    MONTH(FROM_UNIXTIME(created)) as month
-FROM {node}
-WHERE
-    type = :type AND
-    status <> 0
-ORDER BY
-    year DESC,
-    month DESC
-QUERY;
-
-  $items = array();
-  $results = db_query($query, array(':type' => 'blog_post'));
-  foreach ($results as $row) {
-    $text = date("F", mktime(0, 0, 0, $row['month'], date("d"), date("Y")));
-    if ($row['year'] != date("Y")) {
-      $text .= ' ' . $row['year'];
-    }
-
-    $items[] = l($text, OMBUBLOG_BASE_PATH . '/' . $row['year'] . '/' . sprintf('%02d', $row['month']));
-  }
-
-  if (count($content)) {
-    return array(
-      '#theme' => 'item_list',
-      '#items' => $items,
-    );
-  }
-  else {
-    return '';
-  }
-}
-
-/****
- * Menu Callbacks
- */
-
- /**
-  * Main Blog Page, can filter by date
-  *   blog/2010
-  *   blog/2010/08
-  */
-function ombublog_view_by_date($year = NULL, $month = NULL) {
-  $args = array();
-  if ($year) {
-    $args[] = $year;
-  }
-  if ($month) {
-    $args[] = $month;
-  }
-
-  if ($month) {
-    drupal_set_title(t("Posts from !date"), array('!date' => date("F, Y", mktime(0, 0, 0, $month, date("d"), $year))), PASS_THROUGH);
-  }
-  elseif ($year) {
-    drupal_set_title(t("Posts from !year", array('!year' => $year)), PASS_THROUGH);
-  }
-
-  $view = views_get_view('ombublog');
-  $view->set_display('blog_by_date');
-  $view->pre_execute($args);
-  $view->execute();
-
-  return $view->render();
-}
-
- /**
-  * Blog posts filtered by tags
-  *   blog/tag/{term_id}
-  */
-function ombublog_view_by_tags($tids) {
-  $args = array($tids);
-  $tids = trim($tids);
-  $operator = '';
-
-  // Multiples by AND (Ex: 4,5)
-  if (strpos($tids, ',') != FALSE) {
-    $operator = ' and ';
-    $tids = explode(',', $tids);
-  }
-  // Multiples by OR (Ex: 4+5)
-  elseif (strpos($tids, ' ') != FALSE) {
-    $operator = ' or ';
-    $tids = explode(' ', $tids);
-  }
-  // Single tid (Ex: 4)
-  else {
-    $tids = array($tids);
-  }
-
-  $terms = array();
-  foreach ($tids as $tid) {
-    $term = taxonomy_get_term($tid);
-    $terms[] = '<em>' . $term->name . '</em>';
-  }
-
-  if (count($terms) > 2) {
-    $title = t("Posts tagged with ");
-    $last_term = array_pop($terms);
-    $title .= implode(', ', $terms) . $operator . $last_term;
-  }
-  else {
-    $title = t("Posts tagged with ") . implode($operator, $terms);
-  }
-  drupal_set_title($title);
-
-  $view = views_get_view('ombublog');
-  $view->set_display('blog_by_tags');
-  $view->pre_execute($args);
-  $view->execute();
-
-  return $view->render();
-
 }
