@@ -36,6 +36,17 @@ if (OMBUBLOG_SEARCH) {
  */
 
 /**
+ * Implements hook_theme().
+ */
+function ombublog_theme() {
+  return array(
+    'taxonomy_comma_list' => array(
+      'render element' => 'element',
+    ),
+  );
+}
+
+/**
  * Implements hook_cron().
  */
 function ombublog_cron() {
@@ -99,4 +110,78 @@ function ombublog_block_view($delta = 0) {
   }
 
   return $block;
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function ombublog_preprocess_node(&$variables) {
+  if ($variables['node']->type == 'blog_post') {
+    // Include blog css.
+    drupal_add_css(drupal_get_path('module', 'ombublog') . '/ombublog.css');
+
+    // Change post date to something more readable.
+    if ($variables['submitted']) {
+      $date = format_date($variables['node']->created, 'custom', 'F j, Y');
+      $variables['submitted'] = t('Submitted by !username on !datetime', array('!username' => $variables['name'], '!datetime' => $date));
+    }
+
+    if ($variables['page'] === FALSE) {
+      // Add read more link to node teaser.
+      $variables['content']['read_more'] = array(
+        '#markup' => l('Read full post >>', 'node/' . $variables['nid']),
+        '#weight' => $variables['content']['body']['#weight'] * 1.5,
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+      );
+    }
+    else {
+      // Add link back to blog to node pages.
+      $variables['content']['blog_back'] = array(
+        '#markup' => l('Back to blog>>', OMBUBLOG_BASE_PATH),
+        '#weight' => 100,
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+      );
+    }
+
+    // Render taxonomy terms in a comma seprated list.
+    $variables['content']['field_tags']['#theme'] = 'taxonomy_comma_list';
+  }
+}
+
+/**
+ * Theme callback.
+ *
+ * Renders a list of taxonomy terms in a comma seprated list.
+ */
+function theme_taxonomy_comma_list($variables) {
+  if (!isset($variables['element']['#items'])) {
+    return;
+  }
+
+  // Pass variables through field preprocessing, since this isn't actually a 
+  // field theme function.
+  template_preprocess_field($variables, '');
+  template_process_field($variables, '');
+
+  $output = '';
+
+  // Render the label, if it's not hidden.
+  if (!$variables['label_hidden']) {
+    $output .= '<div class="field-label"' . $variables['title_attributes'] . '>' . $variables['label'] . ':&nbsp;</div>';
+  }
+
+  // Build links array.
+  $links = array();
+  foreach ($variables['items'] as $delta => $item) {
+    $links[] = drupal_render($item);
+  }
+
+  $output .= implode(', ', $links);
+ 
+  // Render the top-level DIV.
+  $output = '<div class="' . $variables['classes'] . '"' . $variables['attributes'] . '>' . $output . '</div>';
+
+  return $output;
 }
