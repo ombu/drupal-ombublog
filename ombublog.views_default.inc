@@ -105,7 +105,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    'blogs' => 'blogs',
+    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );
@@ -147,9 +147,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    'blogs' => 'blogs',
-    'departments' => 0,
-    'tags' => 0,
+     variable_get('ombublog_vocabulary', '')=> variable_get('ombublog_vocabulary', ''),
   );
   $handler->display->display_options['arguments']['tid']['validate_options']['type'] = 'convert';
   $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = '1';
@@ -173,8 +171,6 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['field_tags_tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['vocabularies'] = array(
     'tags' => 'tags',
-    'blogs' => 0,
-    'departments' => 0,
   );
   $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['type'] = 'tids';
   $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['transform'] = 0;
@@ -240,7 +236,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    'blogs' => 'blogs',
+    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );
@@ -293,7 +289,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    'blogs' => 'blogs',
+    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );
@@ -328,7 +324,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    'blogs' => 'blogs',
+    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );
@@ -595,7 +591,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    'blogs' => 'blogs',
+    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );

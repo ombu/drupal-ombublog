@@ -171,7 +171,7 @@ function ombublog_field_default_fields() {
         'allowed_values' => array(
           0 => array(
             'parent' => '0',
-            'vocabulary' => 'blogs',
+            'vocabulary' => variable_get('ombublog_vocabulary', ''),
           ),
         ),
       ),

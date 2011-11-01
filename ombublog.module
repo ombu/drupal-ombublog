@@ -366,7 +366,7 @@ function _ombublog_get_current_blog_tid() {
   $query->leftJoin('taxonomy_vocabulary', 'tv', 'td.vid = tv.vid');
   $query->fields('td');
   $query->fields('tv', array('machine_name'));
-  $query->condition('tv.machine_name', 'blogs');
+  $query->condition('tv.machine_name', variable_get('ombublog_vocabulary', ''));
   $query->where("replace(td.name, ' ', '-') = :name", array(':name' => $name));
   $term = $query->execute()->fetchObject();
 
@@ -381,7 +381,7 @@ function _ombublog_get_blog_list() {
     $query = db_select('taxonomy_term_data', 't');
     $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
     $query->fields('t', array('tid', 'name'));
-    $query->condition('v.machine_name', 'blogs', '=');
+    $query->condition('v.machine_name', variable_get('ombublog_vocabulary', ''), '=');
     $result = $query->execute();
     $data = array();
     while ($record = $result->fetchAssoc()) {
