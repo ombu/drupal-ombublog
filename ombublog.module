@@ -36,6 +36,36 @@ if (OMBUBLOG_SEARCH) {
  */
 
 /**
+ * Implements hook_bean_types_api_info().
+ */
+function ombublog_bean_types_api_info() {
+  return array(
+    'api' => bean_current_version(),
+  );
+}
+
+/**
+ * Implements hook_bean_types().
+ */
+function ombublog_bean_types() {
+  $plugins = array();
+  $plugin_path = drupal_get_path('module', 'ombublog');
+
+  $plugins['ombublog'] = array(
+    'name' => 'ombublog_list',
+    'label' => t('Blog Postings'),
+    'handler' => array(
+      'class' => 'ombublog_list_bean',
+      'parent' => 'bean_default',
+    ),
+    'path' => $plugin_path,
+    'file' => 'ombublog.bean.inc',
+    'editable' => TRUE,
+  );
+  return $plugins;
+}
+
+/**
  * Implements hook_theme().
  */
 function ombublog_theme() {
