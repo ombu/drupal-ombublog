@@ -55,6 +55,9 @@ function ombublog_cron() {
   //db_query("DELETE FROM td USING {term_data} td LEFT JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.tid IS NULL AND td.vid = %d", $ombublog_tags_vid);
 }
 
+/**
+ * Implements hook_permissions().
+ */
 function ombublog_permissions() {
   return array(
     'administer ombublogs' => array(
@@ -80,6 +83,34 @@ function ombublog_menu() {
   }
 
   return $items;
+}
+
+/**
+ * Implements hook_image_default_styles().
+ */
+function ombublog_image_default_styles() {
+  $styles = array();
+
+  $styles['blog_teaser'] = array(
+    'effects' => array(
+      array(
+        'name' => 'image_scale_and_crop',
+        'data' => array('width' => 219, 'height' => 117),
+        'weight' => 0,
+      ),
+    )
+  );
+
+  $styles['blog_post'] = array(
+    'effects' => array(
+      array(
+        'name' => 'image_scale_and_crop',
+        'data' => array('width' => 408, 'height' => 300),
+        'weight' => 0,
+      ),
+    )
+  );
+  return $styles;
 }
 
 /**
@@ -166,6 +197,15 @@ function ombublog_block_view($delta = 0) {
 }
 
 /**
+ * Implementation of hook_form_alter();
+ */
+function ombublog_form_comment_node_blog_post_form_alter(&$form, &$form_state, $form_id) {
+  $form['author']['homepage']['#access'] = FALSE;
+  unset($form['author']['mail']['#description']);
+  $form['actions']['submit']['#value'] = 'Submit';
+}
+
+/**
  * Implements hook_preprocess_node().
  */
 function ombublog_preprocess_node(&$variables) {
@@ -240,7 +280,7 @@ function ombublog_preprocess_comment(&$variables) {
 }
 
 /**
- * Impelments hook_preprocess_page()
+ * Implements hook_preprocess_page()
  */
 function ombublog_preprocess_page(&$variables) {
   // Change the page title for blog nodes.
@@ -484,13 +524,4 @@ function ombublog_url_safe_string($string) {
   $string = preg_replace('/[^A-Za-z0-9\-_]/', '', $string);
   $string = preg_replace('/\-+/', '-', $string);
   return $string;
-}
-
-/**
- * Implementation of hook_form_alter();
- */
-function ombublog_form_comment_node_blog_post_form_alter(&$form, &$form_state, $form_id) {
-  $form['author']['homepage']['#access'] = FALSE;
-  unset($form['author']['mail']['#description']);
-  $form['actions']['submit']['#value'] = 'Submit';
 }
