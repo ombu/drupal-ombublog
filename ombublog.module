@@ -139,16 +139,6 @@ function ombublog_block_info() {
     );
   }
 
-  // Add 2 types of blocks for each blog
-  foreach (_ombublog_get_blog_list() as $tid => $name) {
-    $term = taxonomy_term_load($tid);
-    // Grid
-    $blocks['grid_'. $name] = array(
-      'info' => t($term->name .' Blog: Grid'),
-      'cache' => DRUPAL_CACHE_PER_PAGE
-    );
-  }
-
   return $blocks;
 }
 
@@ -173,24 +163,6 @@ function ombublog_block_view($delta = 0) {
     case 'rss_feed':
       $block['content'] = _ombublog_block_get_rss_feed();
       break;
-  }
-
-  // Deal with the grid views
-  if (stristr($delta, 'grid') != FALSE) {
-    $parts = explode('_', $delta, 2);
-    $which_view = $parts[0];
-    $which_blog = $parts[1];
-    $output = _ombublog_block_get_list_type($which_view, $which_blog);
-    $block['content'] = $output['content'];
-
-    if ($which_view == 'grid') {
-      $term = taxonomy_term_load($output['tid']);
-      if ($term) {
-        $block['subject'] = t('From the !blog Blogs', array(
-          '!blog' => $term->name,
-        ));
-      }
-    }
   }
 
   return $block;
