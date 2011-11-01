@@ -51,9 +51,9 @@ function ombublog_bean_types() {
   $plugins = array();
   $plugin_path = drupal_get_path('module', 'ombublog');
 
-  $plugins['ombublog'] = array(
+  $plugins['ombublog_list'] = array(
     'name' => 'ombublog_list',
-    'label' => t('Blog Postings'),
+    'label' => t('Latest Blog Posts'),
     'handler' => array(
       'class' => 'ombublog_list_bean',
       'parent' => 'bean_default',

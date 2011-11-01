@@ -32,7 +32,7 @@ class ombublog_list_bean extends bean_plugin {
         '#type' => 'select',
         '#options' => $options,
         '#default_value' => $bean->tid,
-        '#description' => t('Select the %vocab to show blog posts from.', array('%vocab' => strtolower($vocab->name))),
+        '#description' => t('Select the !vocab to show blog posts from.', array('!vocab' => strtolower($vocab->name))),
       );
     }
 

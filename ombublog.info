@@ -29,5 +29,3 @@ package = "OMBU"
 php = "5.2.4"
 project = "ombublog"
 version = "7.x-0.1"
-
-files[] = "ombublog.bean.inc"
