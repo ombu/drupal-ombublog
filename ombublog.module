@@ -255,9 +255,9 @@ function ombublog_node_view($node, $view_mode, $langcode) {
 }
 
 /**
- * Implements hook_node_preprocess().
+ * Implements hook_preprocess_node().
  */
-function ombublog_node_preprocess(&$variables) {
+function ombublog_preprocess_node(&$variables) {
   if ($variables['node']->type == 'blog_post') {
     // Include blog css.
     drupal_add_css(drupal_get_path('module', 'ombublog') . '/ombublog.css');
