@@ -46,8 +46,7 @@ class ombublog_list_bean extends bean_plugin {
     //   $bean->tid = $state->tid;
     // }
 
-    return array(
-      '#markup' => views_embed_view('ombublog', 'latest_posts', $bean->tid),
-    );
+    $content['#markup'] = views_embed_view('ombublog', 'latest_posts', $bean->tid);
+    return $content;
   }
 }
