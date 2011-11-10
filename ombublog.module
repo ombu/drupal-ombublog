@@ -202,7 +202,6 @@ function ombublog_block_view($delta = 0) {
  * Implementation of hook_form_alter();
  */
 function ombublog_form_comment_node_blog_post_form_alter(&$form, &$form_state, $form_id) {
-  $form['author']['homepage']['#access'] = FALSE;
   unset($form['author']['mail']['#description']);
   $form['actions']['submit']['#value'] = 'Submit';
 }
