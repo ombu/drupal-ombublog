@@ -125,7 +125,7 @@ function ombublog_image_default_styles() {
     'effects' => array(
       array(
         'name' => 'image_scale_and_crop',
-        'data' => array('width' => 219, 'height' => 117),
+        'data' => array('width' => 251, 'height' => 134),
         'weight' => 0,
       ),
     )
