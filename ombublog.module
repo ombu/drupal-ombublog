@@ -364,7 +364,7 @@ function theme_taxonomy_comma_list($variables) {
     $links[] = drupal_render($item);
   }
 
-  $output .= implode(', ', $links);
+  $output .= implode('<span>, </span>', $links);
 
   // Render the top-level DIV.
   $output = '<div class="' . $variables['classes'] . '"' . $variables['attributes'] . '>' . $output . '</div>';
