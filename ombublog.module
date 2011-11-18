@@ -337,6 +337,21 @@ function ombublog_menu_path_to_root($mlid) {
 }
 
 /**
+ * Utility function to return the base url of the current blog.
+ * Can be alterable via hook_ombublog_url_alter().
+ */
+function ombublog_get_base_url() {
+  $url = drupal_static(__FUNCTION__);
+
+  if (!$url) {
+    $url = OMBUBLOG_BASE_PATH . '/' . _ombublog_get_current_blog_name();
+    drupal_alter('ombublog_url', $url);
+  }
+
+  return $url;
+}
+
+/**
  * Theme callback.
  *
  * Renders a list of taxonomy terms in a comma seprated list.
@@ -374,45 +389,49 @@ function theme_taxonomy_comma_list($variables) {
 
 /**
  * Returns the taxonomy term url piece that denotes the current blog. Ex: "academics"
- * Used to fill the contextual filters on the blog sidebar blocks
+ * Used to fill the contextual filters on the blog sidebar blocks.  This assumes
+ * that the term in the url is a full term name.  The term id that gets returned
+ * can be altered via hook_ombublog_tid_alter().
  */
 function _ombublog_get_current_blog_name() {
-  static $name;
+  $name = drupal_static(__FUNCTION__);
 
-  if ($name) {
-    return $name;
+  if (!$name) {
+    $path = explode('/', trim(request_uri(), '/'));
+
+    if (isset($path[1])) {
+      $name = $path[1];
+    }
   }
 
-  $path = explode('/', trim(request_uri(), '/'));
-
-  if (isset($path[1])) {
-    $name = $path[1];
-    return $name;
-  }
-  return FALSE;
+  return $name;
 }
 
+/**
+ * Helper function to get the current blog term id.
+ */
 function _ombublog_get_current_blog_tid() {
   static $tid;
 
-  if ($tid) {
-    return $tid;
+  if (!$tid) {
+    $name = _ombublog_get_current_blog_name();
+    if ($name) {
+      $query = db_select('taxonomy_term_data', 'td');
+      $query->leftJoin('taxonomy_vocabulary', 'tv', 'td.vid = tv.vid');
+      $query->fields('td');
+      $query->fields('tv', array('machine_name'));
+      $query->condition('tv.machine_name', variable_get('ombublog_vocabulary', ''));
+      $query->where("replace(td.name, ' ', '-') = :name", array(':name' => $name));
+      $term = $query->execute()->fetchObject();
+
+      if ($term) {
+        $tid = $term->tid;
+      }
+    }
+    drupal_alter('ombublog_tid', $tid);
   }
 
-  $name = _ombublog_get_current_blog_name();
-  $query = db_select('taxonomy_term_data', 'td');
-  $query->leftJoin('taxonomy_vocabulary', 'tv', 'td.vid = tv.vid');
-  $query->fields('td');
-  $query->fields('tv', array('machine_name'));
-  $query->condition('tv.machine_name', variable_get('ombublog_vocabulary', ''));
-  $query->where("replace(td.name, ' ', '-') = :name", array(':name' => $name));
-  $term = $query->execute()->fetchObject();
-
-  if ($term) {
-    $tid = $term->tid;
-    return $tid;
-  }
-  return FALSE;
+  return $tid;
 }
 
 function _ombublog_get_blog_list() {
@@ -432,7 +451,6 @@ function _ombublog_get_blog_list() {
  * Block function for the archives list
  */
 function _ombublog_block_get_archives_list() {
-  $name = _ombublog_get_current_blog_name();
   $tid = _ombublog_get_current_blog_tid();
   $query = <<<QUERY
 SELECT DISTINCT
@@ -454,7 +472,7 @@ QUERY;
     while($r = $results->fetchAssoc()) {
         $text = date("F Y", mktime(0, 0, 0, $r['month'], date("d"), date("Y")));
 
-        $content[] = l($text, OMBUBLOG_BASE_PATH .'/'. $name .'/'. $r['year'] . sprintf('%02d', $r['month']));
+        $content[] = l($text,  ombublog_get_base_url() .'/'. $r['year'] . sprintf('%02d', $r['month']));
     }
 
     if (count($content)) {
@@ -466,7 +484,6 @@ QUERY;
 }
 
 function _ombublog_block_get_tags_list() {
-  $name = _ombublog_get_current_blog_name();
   $blogs_tid = _ombublog_get_current_blog_tid();
 
   $query = <<<QUERY
@@ -487,7 +504,7 @@ QUERY;
   $results = db_query($query, array(':blogs_tid' => $blogs_tid));
   while($row = $results->fetchAssoc()) {
       if ((int) $row['count'] > 0) {
-        $content[] = l($row['title'] .' ('. $row['count'] .')', OMBUBLOG_BASE_PATH .'/'. $name .'/tags/'. $row['tid'] .'/'. ombublog_url_safe_string($row['title']));
+        $content[] = l($row['title'] .' ('. $row['count'] .')', ombublog_get_base_url() .'/tags/'. $row['tid'] .'/'. ombublog_url_safe_string($row['title']));
       }
   }
 
@@ -501,8 +518,7 @@ QUERY;
 }
 
 function _ombublog_block_get_rss_feed() {
-  $name = _ombublog_get_current_blog_name();
-  return l('RSS', "blog/$name/feed", array('attributes' => array('class' => 'rss-icon', 'title' => 'RSS Feed')));
+  return l('RSS', ombublog_get_base_url() . '/feed', array('attributes' => array('class' => 'rss-icon', 'title' => 'RSS Feed')));
 }
 
 function _ombublog_block_get_list_type($which_display, $which_blog) {
