@@ -11,7 +11,7 @@ class ombublog_list_bean extends bean_plugin {
     );
   }
 
-  public function form($bean, $form, &$form_state) {
+  public function form($bean) {
     $form = array();
 
     // Get all state terms.
