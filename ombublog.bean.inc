@@ -11,9 +11,7 @@ class ombublog_list_bean extends bean_plugin {
     );
   }
 
-  public function form($bean) {
-    $form = array();
-
+  public function form($bean, $form, &$form_state) {
     // Get all state terms.
     $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_vocabulary', ''));
     if ($vocab) {
@@ -39,7 +37,7 @@ class ombublog_list_bean extends bean_plugin {
     return $form;
   }
 
-  public function view($bean, $content, $view_mode = 'full', $langcode = NULL) {
+  public function view($bean, $content, $view_mode = 'default', $langcode = NULL) {
     // Default to current page's state.
     // if ($bean->tid == 'default') {
     //   $state = state_get_active_state();
