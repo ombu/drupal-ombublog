@@ -490,7 +490,7 @@ QUERY;
     $content = array();
     $results = db_query($query, array(':type' => 'blog_post', ':tid' => $tid));
     while($r = $results->fetchAssoc()) {
-        $text = date("F Y", mktime(0, 0, 0, $r['month'], date("d"), date("Y")));
+        $text = date("F Y", mktime(0, 0, 0, $r['month'], date("d"), $r['year']));
 
         $content[] = l($text,  ombublog_get_base_url() .'/'. $r['year'] . sprintf('%02d', $r['month']));
     }
