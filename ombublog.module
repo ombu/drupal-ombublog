@@ -144,8 +144,8 @@ function ombublog_image_default_styles() {
   $styles['blog_post'] = array(
     'effects' => array(
       array(
-        'name' => 'image_scale_and_crop',
-        'data' => array('width' => 408, 'height' => 300),
+        'name' => 'image_scale',
+        'data' => array('width' => 408, 'height' => 300, 'upscale' => 0),
         'weight' => 0,
       ),
     )
