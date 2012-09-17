@@ -45,20 +45,6 @@ function ombublog_cron() {
  */
 function ombublog_menu() {
   $items = array();
-
-  if (OMBUBLOG_SEARCH) {
-    $items[OMBUBLOG_BASE_PATH . '/search'] = array(
-      'page callback' => 'ombublog_search_view',
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-    );
-    $items[OMBUBLOG_BASE_PATH . '/search/%menu_tail'] = array(
-      'page callback' => 'ombublog_search_view',
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-    );
-  }
-
   return $items;
 }
 
