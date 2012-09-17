@@ -6,12 +6,6 @@
  *
  * Provides single-blog functionality for a drupal site. Features include:
  *   - Tags, tagging via taxonomy
- *   - Blog-only search.  Set OMBUBLOG_SEARCH to TRUE to enable
- *       To disable the normal search module callbacks (/search/node, /search/user), place
- *       the following code in a hook_menu_alter() function:
- *         unset($items['search/user/%menu_tail']);
- *         unset($items['search/node/%menu_tail']);
- *         unset($items['search']);
  */
 
 include_once('ombublog.features.inc');
@@ -20,15 +14,6 @@ include_once('ombublog.features.inc');
  * Constants
  */
 define('OMBUBLOG_BASE_PATH', 'blog'); // Base url stem for blog functionality
-define('OMBUBLOG_SEARCH', TRUE); // Enable/Disable blog searching
-
-
-/****
- * Includes
- */
-if (OMBUBLOG_SEARCH) {
-    require_once(dirname(__FILE__) . '/ombublog.search.inc');
-}
 
 
 /****
@@ -85,13 +70,6 @@ function ombublog_block_info() {
     'info' => t('OMBU Blog Archive list'),
     'cache' => DRUPAL_CACHE_GLOBAL,
   );
-
-  if (OMBUBLOG_SEARCH) {
-    $blocks['search'] = array(
-      'info' => t('OMBU Blog Search Form'),
-      'cache' => DRUPAL_NO_CACHE,
-    );
-  }
 
   return $blocks;
 }
