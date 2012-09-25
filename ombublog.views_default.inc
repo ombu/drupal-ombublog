@@ -123,23 +123,16 @@ function ombublog_views_default_views() {
   $handler = $view->new_display('page', 'Blog Posts by Tag', 'blog_by_tags');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  /* Contextual filter: Content: Tags (field_tags) */
-  $handler->display->display_options['arguments']['field_tags_tid']['id'] = 'field_tags_tid';
-  $handler->display->display_options['arguments']['field_tags_tid']['table'] = 'field_data_field_tags';
-  $handler->display->display_options['arguments']['field_tags_tid']['field'] = 'field_tags_tid';
-  $handler->display->display_options['arguments']['field_tags_tid']['title_enable'] = TRUE;
-  $handler->display->display_options['arguments']['field_tags_tid']['title'] = 'Posts tagged with %1';
-  $handler->display->display_options['arguments']['field_tags_tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['field_tags_tid']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['field_tags_tid']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['field_tags_tid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['field_tags_tid']['specify_validation'] = TRUE;
-  $handler->display->display_options['arguments']['field_tags_tid']['validate']['type'] = 'taxonomy_term';
-  $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['vocabularies'] = array(
-    'tags' => 'tags',
-    'department' => 0,
-  );
-  $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['type'] = 'tids';
+  /* Contextual filter: Content: Has taxonomy term ID */
+  $handler->display->display_options['arguments']['tid']['id'] = 'tid';
+  $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
+  $handler->display->display_options['arguments']['tid']['field'] = 'tid';
+  $handler->display->display_options['arguments']['tid']['title_enable'] = TRUE;
+  $handler->display->display_options['arguments']['tid']['title'] = 'Blog Posts: %1';
+  $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['path'] = 'blog/tags';
 
   /* Display: Archive Block */
