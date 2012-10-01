@@ -95,7 +95,7 @@ function ombublog_preprocess_node(&$variables) {
       $variables['content']['read_more'] = array(
         '#markup' => l('Read full post >>', 'node/' . $variables['nid']),
         '#weight' => $variables['content']['body']['#weight'] * 1.5,
-        '#prefix' => '<p>',
+        '#prefix' => '<p class="read-more-wrapper">',
         '#suffix' => '</p>',
       );
     }
@@ -104,7 +104,7 @@ function ombublog_preprocess_node(&$variables) {
       $variables['content']['blog_back'] = array(
         '#markup' => l('Back to blog>>', OMBUBLOG_BASE_PATH),
         '#weight' => 100,
-        '#prefix' => '<p>',
+        '#prefix' => '<p class="back-to-blog">',
         '#suffix' => '</p>',
       );
     }
