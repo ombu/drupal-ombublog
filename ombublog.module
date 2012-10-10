@@ -102,7 +102,7 @@ function ombublog_preprocess_node(&$variables) {
     else {
       // Add link back to blog to node pages.
       $variables['content']['blog_back'] = array(
-        '#markup' => l('Back to blog>>', OMBUBLOG_BASE_PATH),
+        '#markup' => l('Back to blog >>', OMBUBLOG_BASE_PATH),
         '#weight' => 100,
         '#prefix' => '<p class="back-to-blog">',
         '#suffix' => '</p>',
