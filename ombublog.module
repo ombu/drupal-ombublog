@@ -109,6 +109,12 @@ function ombublog_preprocess_node(&$variables) {
       );
     }
 
+    // Rewrite tag urls to point to the blog by tid page.
+    foreach (element_children($variables['content']['field_tags']) as $i) {
+      $tid = $variables['content']['field_tags']['#items'][$i]['tid'];
+      $variables['content']['field_tags'][$i]['#href'] = OMBUBLOG_BASE_PATH . '/tags/' . $tid;
+    }
+
     // Render taxonomy terms in a comma seprated list.
     $variables['content']['field_tags']['#theme'] = 'taxonomy_comma_list';
   }
