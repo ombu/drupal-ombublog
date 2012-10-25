@@ -178,6 +178,21 @@ function ombublog_views_default_views() {
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   $handler->display->display_options['block_description'] = 'ombublog: Recent Posts';
+
+  /* Display: Feed */
+  $handler = $view->new_display('feed', 'Feed', 'feed_1');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'some';
+  $handler->display->display_options['style_plugin'] = 'rss';
+  $handler->display->display_options['row_plugin'] = 'node_rss';
+  $handler->display->display_options['path'] = 'blog/feed';
+  $handler->display->display_options['displays'] = array(
+    'blog_by_date' => 'blog_by_date',
+    'default' => 0,
+    'blog_by_tags' => 0,
+    'block_1' => 0,
+    'recent_posts' => 0,
+  );
   $export['ombublog'] = $view;
 
   $view = new view();
