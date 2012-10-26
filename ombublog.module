@@ -93,7 +93,8 @@ function ombublog_preprocess_node(&$variables) {
     if ($variables['page'] === FALSE) {
       // Add read more link to node teaser.
       $variables['content']['read_more'] = array(
-        '#markup' => l('Read full post >>', 'node/' . $variables['nid']),
+        // '#markup' => l('Read full post >>', 'node/' . $variables['nid']),
+        '#markup' => l(variable_get('ombublock_read_more_text', 'Read full post >>'), 'node/' . $variables['nid']),
         '#weight' => $variables['content']['body']['#weight'] * 1.5,
         '#prefix' => '<p class="read-more-wrapper">',
         '#suffix' => '</p>',
