@@ -4,7 +4,7 @@
  * ombublog.bean.inc
  */
 
-class ombublog_list_bean extends bean_plugin {
+class OmbublogList extends BeanPlugin {
   public function values() {
     return array(
       'tid' => FALSE,

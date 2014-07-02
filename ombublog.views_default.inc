@@ -5,23 +5,24 @@
  */
 
 /**
- * Implementation of hook_views_default_views().
+ * Implements hook_views_default_views().
  */
 function ombublog_views_default_views() {
   $export = array();
 
-  $view = new view;
+  $view = new view();
   $view->name = 'ombublog';
   $view->description = 'Ombu Blog';
   $view->tag = '';
   $view->base_table = 'node';
   $view->human_name = 'ombublog';
   $view->core = 0;
-  $view->api_version = '3.0-alpha1';
+  $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Defaults */
   $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
@@ -30,31 +31,13 @@ function ombublog_views_default_views() {
   $handler->display->display_options['pager']['type'] = 'full';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'node';
-  $handler->display->display_options['row_options']['links'] = 1;
-  $handler->display->display_options['row_options']['comments'] = 0;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 0;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
+  $handler->display->display_options['fields']['title']['hide_alter_empty'] = FALSE;
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -95,14 +78,13 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
   $handler->display->display_options['arguments']['tid']['field'] = 'tid';
   $handler->display->display_options['arguments']['tid']['default_action'] = 'not found';
-  $handler->display->display_options['arguments']['tid']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['tid']['title_enable'] = TRUE;
   $handler->display->display_options['arguments']['tid']['title'] = '%1 Blog';
   $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['tid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
     variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
@@ -110,20 +92,14 @@ function ombublog_views_default_views() {
     'tags' => 0,
   );
   $handler->display->display_options['arguments']['tid']['validate_options']['type'] = 'convert';
-  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = '1';
-  $handler->display->display_options['arguments']['tid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['tid']['add_table'] = 0;
-  $handler->display->display_options['arguments']['tid']['require_value'] = 0;
-  $handler->display->display_options['arguments']['tid']['reduce_duplicates'] = 0;
-  $handler->display->display_options['arguments']['tid']['set_breadcrumb'] = 0;
+  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = TRUE;
   /* Contextual filter: Content: Created year + month */
   $handler->display->display_options['arguments']['created_year_month']['id'] = 'created_year_month';
   $handler->display->display_options['arguments']['created_year_month']['table'] = 'node';
   $handler->display->display_options['arguments']['created_year_month']['field'] = 'created_year_month';
-  $handler->display->display_options['arguments']['created_year_month']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['created_year_month']['title_enable'] = TRUE;
   $handler->display->display_options['arguments']['created_year_month']['title'] = '%1 Blog: %2';
   $handler->display->display_options['arguments']['created_year_month']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['created_year_month']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['created_year_month']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['created_year_month']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['created_year_month']['summary_options']['items_per_page'] = '25';
@@ -137,45 +113,35 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
   $handler->display->display_options['arguments']['tid']['field'] = 'tid';
   $handler->display->display_options['arguments']['tid']['default_action'] = 'not found';
-  $handler->display->display_options['arguments']['tid']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['tid']['title_enable'] = TRUE;
   $handler->display->display_options['arguments']['tid']['title'] = '%1 Blog';
   $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['tid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
      variable_get('ombublog_vocabulary', '')=> variable_get('ombublog_vocabulary', ''),
   );
   $handler->display->display_options['arguments']['tid']['validate_options']['type'] = 'convert';
-  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = '1';
-  $handler->display->display_options['arguments']['tid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['tid']['add_table'] = 0;
-  $handler->display->display_options['arguments']['tid']['require_value'] = 0;
-  $handler->display->display_options['arguments']['tid']['reduce_duplicates'] = 0;
-  $handler->display->display_options['arguments']['tid']['set_breadcrumb'] = 0;
+  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = TRUE;
   /* Contextual filter: Content: Tags (field_tags) */
   $handler->display->display_options['arguments']['field_tags_tid']['id'] = 'field_tags_tid';
   $handler->display->display_options['arguments']['field_tags_tid']['table'] = 'field_data_field_tags';
   $handler->display->display_options['arguments']['field_tags_tid']['field'] = 'field_tags_tid';
-  $handler->display->display_options['arguments']['field_tags_tid']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['field_tags_tid']['title_enable'] = TRUE;
   $handler->display->display_options['arguments']['field_tags_tid']['title'] = '%1 Blog: %2';
   $handler->display->display_options['arguments']['field_tags_tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['field_tags_tid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['field_tags_tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['field_tags_tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['field_tags_tid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['field_tags_tid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['field_tags_tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['field_tags_tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['vocabularies'] = array(
     'tags' => 'tags',
   );
   $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['type'] = 'tids';
-  $handler->display->display_options['arguments']['field_tags_tid']['validate_options']['transform'] = 0;
-  $handler->display->display_options['arguments']['field_tags_tid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['field_tags_tid']['not'] = 0;
   $handler->display->display_options['path'] = 'blog/%/tags/%';
 
   /* Display: Archive Block */
@@ -189,7 +155,6 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['created_year_month']['field'] = 'created_year_month';
   $handler->display->display_options['arguments']['created_year_month']['default_action'] = 'summary';
   $handler->display->display_options['arguments']['created_year_month']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['created_year_month']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['created_year_month']['summary']['sort_order'] = 'desc';
   $handler->display->display_options['arguments']['created_year_month']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['created_year_month']['summary']['format'] = 'default_summary';
@@ -212,8 +177,6 @@ function ombublog_views_default_views() {
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'fields';
-  $handler->display->display_options['row_options']['hide_empty'] = 0;
-  $handler->display->display_options['row_options']['default_field_elements'] = 1;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['sorts'] = FALSE;
   /* Sort criterion: Content: Post date */
@@ -229,11 +192,10 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['default_action'] = 'default';
   $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'php';
   $handler->display->display_options['arguments']['tid']['default_argument_options']['code'] = 'return _ombublog_get_current_blog_name();';
-  $handler->display->display_options['arguments']['tid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
     variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
@@ -241,12 +203,7 @@ function ombublog_views_default_views() {
     'tags' => 0,
   );
   $handler->display->display_options['arguments']['tid']['validate_options']['type'] = 'convert';
-  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = '1';
-  $handler->display->display_options['arguments']['tid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['tid']['add_table'] = 0;
-  $handler->display->display_options['arguments']['tid']['require_value'] = 0;
-  $handler->display->display_options['arguments']['tid']['reduce_duplicates'] = 0;
-  $handler->display->display_options['arguments']['tid']['set_breadcrumb'] = 0;
+  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = TRUE;
   $handler->display->display_options['block_description'] = 'Blog Recent Posts';
 
   /* Display: Most Popular */
@@ -265,8 +222,6 @@ function ombublog_views_default_views() {
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'fields';
-  $handler->display->display_options['row_options']['hide_empty'] = 0;
-  $handler->display->display_options['row_options']['default_field_elements'] = 1;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['sorts'] = FALSE;
   /* Sort criterion: Content statistics: Total views */
@@ -282,11 +237,10 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['default_action'] = 'default';
   $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'php';
   $handler->display->display_options['arguments']['tid']['default_argument_options']['code'] = 'return _ombublog_get_current_blog_name();';
-  $handler->display->display_options['arguments']['tid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
     variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
@@ -294,12 +248,7 @@ function ombublog_views_default_views() {
     'tags' => 0,
   );
   $handler->display->display_options['arguments']['tid']['validate_options']['type'] = 'convert';
-  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = '1';
-  $handler->display->display_options['arguments']['tid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['tid']['add_table'] = 0;
-  $handler->display->display_options['arguments']['tid']['require_value'] = 0;
-  $handler->display->display_options['arguments']['tid']['reduce_duplicates'] = 0;
-  $handler->display->display_options['arguments']['tid']['set_breadcrumb'] = 0;
+  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = TRUE;
   $handler->display->display_options['block_description'] = 'Blog Most Popular';
 
   /* Display: Feed */
@@ -314,27 +263,21 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
   $handler->display->display_options['arguments']['tid']['field'] = 'tid';
   $handler->display->display_options['arguments']['tid']['default_action'] = 'not found';
-  $handler->display->display_options['arguments']['tid']['title_enable'] = 1;
+  $handler->display->display_options['arguments']['tid']['title_enable'] = TRUE;
   $handler->display->display_options['arguments']['tid']['title'] = '%1 Blog Feed';
   $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['tid']['default_argument_skip_url'] = 0;
   $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['tid']['specify_validation'] = 1;
+  $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
+    '' => '',
     'departments' => 0,
     'tags' => 0,
   );
   $handler->display->display_options['arguments']['tid']['validate_options']['type'] = 'convert';
-  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = '1';
-  $handler->display->display_options['arguments']['tid']['break_phrase'] = 0;
-  $handler->display->display_options['arguments']['tid']['add_table'] = 0;
-  $handler->display->display_options['arguments']['tid']['require_value'] = 0;
-  $handler->display->display_options['arguments']['tid']['reduce_duplicates'] = 0;
-  $handler->display->display_options['arguments']['tid']['set_breadcrumb'] = 0;
+  $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = TRUE;
   $handler->display->display_options['path'] = 'blog/%/feed';
 
   /* Display: Latest Posts Block */
@@ -349,8 +292,6 @@ function ombublog_views_default_views() {
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'fields';
-  $handler->display->display_options['row_options']['hide_empty'] = 0;
-  $handler->display->display_options['row_options']['default_field_elements'] = 1;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
@@ -358,113 +299,52 @@ function ombublog_views_default_views() {
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 0;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
+  $handler->display->display_options['fields']['title']['hide_alter_empty'] = FALSE;
   /* Field: Content: Body */
   $handler->display->display_options['fields']['body']['id'] = 'body';
   $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['body']['field'] = 'body';
   $handler->display->display_options['fields']['body']['label'] = '';
-  $handler->display->display_options['fields']['body']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['body']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['body']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['body']['alter']['html'] = 0;
   $handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['body']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['body']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['body']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['body']['hide_alter_empty'] = 0;
+  $handler->display->display_options['fields']['body']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
   $handler->display->display_options['fields']['body']['settings'] = array(
     'trim_length' => '200',
   );
-  $handler->display->display_options['fields']['body']['field_api_classes'] = 0;
   /* Field: Content: Post date */
   $handler->display->display_options['fields']['created']['id'] = 'created';
   $handler->display->display_options['fields']['created']['table'] = 'node';
   $handler->display->display_options['fields']['created']['field'] = 'created';
   $handler->display->display_options['fields']['created']['label'] = '';
-  $handler->display->display_options['fields']['created']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['created']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['created']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['created']['alter']['html'] = 0;
   $handler->display->display_options['fields']['created']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['created']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['created']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['created']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['created']['hide_alter_empty'] = 0;
+  $handler->display->display_options['fields']['created']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['created']['date_format'] = 'custom';
   $handler->display->display_options['fields']['created']['custom_date_format'] = 'F d, Y';
   /* Field: Content: Link */
   $handler->display->display_options['fields']['view_node']['id'] = 'view_node';
-  $handler->display->display_options['fields']['view_node']['table'] = 'node';
+  $handler->display->display_options['fields']['view_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['view_node']['field'] = 'view_node';
   $handler->display->display_options['fields']['view_node']['label'] = '';
-  $handler->display->display_options['fields']['view_node']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['view_node']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['view_node']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['view_node']['alter']['html'] = 0;
   $handler->display->display_options['fields']['view_node']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['view_node']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['view_node']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['view_node']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['view_node']['hide_alter_empty'] = 0;
+  $handler->display->display_options['fields']['view_node']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['view_node']['text'] = 'Read';
   $export['ombublog'] = $view;
 
-  $view = new view;
+  $view = new view();
   $view->name = 'ombublog_tags';
   $view->description = 'Ombu Blog Tags';
   $view->tag = '';
   $view->base_table = 'taxonomy_term_data';
   $view->human_name = 'ombublog_tags';
   $view->core = 0;
-  $view->api_version = '3.0-alpha1';
+  $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Defaults */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->display->display_options['items_per_page'] = 0;
+  $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
@@ -479,31 +359,13 @@ function ombublog_views_default_views() {
   $handler->display->display_options['fields']['tid']['table'] = 'taxonomy_term_data';
   $handler->display->display_options['fields']['tid']['field'] = 'tid';
   $handler->display->display_options['fields']['tid']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['tid']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['tid']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['tid']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['tid']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['tid']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['tid']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['tid']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['tid']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['tid']['empty_zero'] = 0;
   /* Field: Taxonomy term: Name */
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'taxonomy_term_data';
   $handler->display->display_options['fields']['name']['field'] = 'name';
   $handler->display->display_options['fields']['name']['label'] = '';
-  $handler->display->display_options['fields']['name']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['make_link'] = 1;
+  $handler->display->display_options['fields']['name']['alter']['make_link'] = TRUE;
   $handler->display->display_options['fields']['name']['alter']['path'] = 'blog/tag/[tid]';
-  $handler->display->display_options['fields']['name']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['name']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['name']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['name']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['name']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['name']['link_to_taxonomy'] = 0;
   /* Sort criterion: Taxonomy term: Name */
   $handler->display->display_options['sorts']['name']['id'] = 'name';
   $handler->display->display_options['sorts']['name']['table'] = 'taxonomy_term_data';

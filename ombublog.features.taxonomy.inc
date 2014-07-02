@@ -5,7 +5,7 @@
  */
 
 /**
- * Implementation of hook_taxonomy_default_vocabularies().
+ * Implements hook_taxonomy_default_vocabularies().
  */
 function ombublog_taxonomy_default_vocabularies() {
   return array(
@@ -13,9 +13,9 @@ function ombublog_taxonomy_default_vocabularies() {
       'name' => 'Tags',
       'machine_name' => 'tags',
       'description' => 'Blog post tags',
-      'hierarchy' => '0',
+      'hierarchy' => 0,
       'module' => 'taxonomy',
-      'weight' => '0',
+      'weight' => 0,
       'rdf_mapping' => array(
         'rdftype' => array(
           0 => 'skos:ConceptScheme',
