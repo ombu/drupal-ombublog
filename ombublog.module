@@ -6,28 +6,26 @@
  *
  * Provides single-blog functionality for a drupal site. Features include:
  *   - Tags, tagging via taxonomy
- *   - Blog-only search.  Set OMBUBLOG_SEARCH to TRUE to enable
- *       To disable the normal search module callbacks (/search/node, /search/user), place
- *       the following code in a hook_menu_alter() function:
- *         unset($items['search/user/%menu_tail']);
- *         unset($items['search/node/%menu_tail']);
- *         unset($items['search']);
+ *   - Blog-only search
  */
 
-include_once('ombublog.features.inc');
+include_once 'ombublog.features.inc';
 
-/****
+/**
  * Constants
  */
-define('OMBUBLOG_BASE_PATH', 'blog'); // Base url stem for blog functionality
-define('OMBUBLOG_SEARCH', TRUE); // Enable/Disable blog searching
+
+/**
+ * Base url stem for blog functionality
+ */
+define('OMBUBLOG_BASE_PATH', 'blog');
 
 
 /**
  * Includes
  */
 if (OMBUBLOG_SEARCH) {
-    require_once(dirname(__FILE__) . '/ombublog.search.inc');
+  require_once dirname(__FILE__) . '/ombublog.search.inc';
 }
 
 
@@ -139,7 +137,7 @@ function ombublog_image_default_styles() {
         'data' => array('width' => 251, 'height' => 134, 'upscale' => 0),
         'weight' => 0,
       ),
-    )
+    ),
   );
 
   $styles['blog_post'] = array(
@@ -149,7 +147,7 @@ function ombublog_image_default_styles() {
         'data' => array('width' => 408, 'height' => 300, 'upscale' => 0),
         'weight' => 0,
       ),
-    )
+    ),
   );
   return $styles;
 }
@@ -193,14 +191,17 @@ function ombublog_block_view($delta = 0) {
     case 'search':
       $block['content'] = drupal_get_form('ombublog_search_form');
       break;
+
     case 'archive_list':
       $block['subject'] = t('Archives');
       $block['content'] = _ombublog_block_get_archives_list();
       break;
+
     case 'tags_list':
       $block['subject'] = t('Categories');
       $block['content'] = _ombublog_block_get_tags_list();
       break;
+
     case 'rss_feed':
       $block['content'] = _ombublog_block_get_rss_feed();
       break;
@@ -236,7 +237,7 @@ function ombublog_node_view($node, $view_mode, $langcode) {
       // Build blog links.
       $links = array();
 
-      // Add comment links
+      // Add comment links.
       if (module_exists('comment')) {
         if ($node->comment_count == 0) {
           $links['comments'] = array(
@@ -271,7 +272,7 @@ function ombublog_node_view($node, $view_mode, $langcode) {
     $node->content['field_tags']['#theme'] = 'taxonomy_comma_list';
   }
 
-  // Don't show the link to "feature" this item
+  // Don't show the link to "feature" this item.
   unset($node->content['links']['flag']);
   unset($node->content['links']['comment']);
 }
@@ -298,7 +299,7 @@ function ombublog_preprocess_comment(&$variables) {
 }
 
 /**
- * Utility function to load the MENU ITEM parents of a mlid
+ * Utility function to load the MENU ITEM parents of a mlid.
  */
 function ombublog_menu_path_to_root($mlid) {
   $parents = array();
@@ -313,6 +314,7 @@ function ombublog_menu_path_to_root($mlid) {
 
 /**
  * Utility function to return the base url of the current blog.
+ *
  * Can be alterable via hook_ombublog_url_alter().
  */
 function ombublog_get_base_url() {
@@ -363,7 +365,8 @@ function theme_taxonomy_comma_list($variables) {
 }
 
 /**
- * Returns the taxonomy term url piece that denotes the current blog. Ex: "academics"
+ * Returns the taxonomy term url piece that denotes the current blog.
+ *
  * Used to fill the contextual filters on the blog sidebar blocks.  This assumes
  * that the term in the url is a full term name.  The term id that gets returned
  * can be altered via hook_ombublog_tid_alter().
@@ -410,20 +413,20 @@ function _ombublog_get_current_blog_tid() {
 }
 
 function _ombublog_get_blog_list() {
-    $query = db_select('taxonomy_term_data', 't');
-    $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
-    $query->fields('t', array('tid', 'name'));
-    $query->condition('v.machine_name', variable_get('ombublog_category_vocabulary', ''), '=');
-    $result = $query->execute();
-    $data = array();
-    while ($record = $result->fetchAssoc()) {
-        $data[$record['tid']] = ombublog_url_safe_string($record['name']);
-    }
-    return $data;
+  $query = db_select('taxonomy_term_data', 't');
+  $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
+  $query->fields('t', array('tid', 'name'));
+  $query->condition('v.machine_name', variable_get('ombublog_category_vocabulary', ''), '=');
+  $result = $query->execute();
+  $data = array();
+  while ($record = $result->fetchAssoc()) {
+    $data[$record['tid']] = ombublog_url_safe_string($record['name']);
+  }
+  return $data;
 }
 
 /**
- * Block function for the archives list
+ * Block function for the archives list.
  */
 function _ombublog_block_get_archives_list() {
   $tid = _ombublog_get_current_blog_tid();
@@ -442,20 +445,20 @@ year DESC,
 month DESC
 QUERY;
 
-    $content = array();
-    $results = db_query($query, array(':type' => 'blog_post', ':tid' => $tid));
-    while($r = $results->fetchAssoc()) {
-        $text = date("F Y", mktime(0, 0, 0, $r['month'], date("d"), $r['year']));
+  $content = array();
+  $results = db_query($query, array(':type' => 'blog_post', ':tid' => $tid));
+  while ($r = $results->fetchAssoc()) {
+    $text = date("F Y", mktime(0, 0, 0, $r['month'], date("d"), $r['year']));
 
-        $content[] = l($text,  ombublog_get_base_url() .'/'. $r['year'] . sprintf('%02d', $r['month']));
-    }
+    $content[] = l($text, ombublog_get_base_url() . '/' . $r['year'] . sprintf('%02d', $r['month']));
+  }
 
-    if (count($content)) {
-        return '<div class="item-list"><ul><li>'. implode('</li><li>', $content) .'</li></ul></div>';
-    }
-    else {
-        return '';
-    }
+  if (count($content)) {
+    return '<div class="item-list"><ul><li>' . implode('</li><li>', $content) . '</li></ul></div>';
+  }
+  else {
+    return '';
+  }
 }
 
 function _ombublog_block_get_tags_list() {
@@ -480,8 +483,8 @@ QUERY;
   $results = db_query($query, array(':blogs_tid' => $blogs_tid));
   foreach ($results as $row) {
     $links[] = array(
-      'title' => $row->title .' ('. $row->count .')',
-      'href' => ombublog_get_base_url() .'/tags/'. $row->tid .'/'. ombublog_url_safe_string($row->title),
+      'title' => $row->title . ' (' . $row->count . ')',
+      'href' => ombublog_get_base_url() . '/tags/' . $row->tid . '/' . ombublog_url_safe_string($row->title),
       'term' => $row,
     );
   }
@@ -495,19 +498,12 @@ QUERY;
 }
 
 function _ombublog_block_get_rss_feed() {
-  return l('RSS', ombublog_get_base_url() . '/feed', array('attributes' => array('class' => 'rss-icon', 'title' => 'RSS Feed')));
-}
-
-function _ombublog_block_get_list_type($which_display, $which_blog) {
-  $view = views_get_view('ombublog');
-  $view->set_display('block_'. $which_display);
-  $view->set_arguments(array($which_blog));
-  $view->pre_execute();
-  $view->execute();
-  return array(
-    'tid' => $view->argument['tid']->get_value(),
-    'content' => $view->render(),
-  );
+  return l(t('RSS'), ombublog_get_base_url() . '/feed', array(
+    'attributes' => array(
+      'class' => 'rss-icon',
+      'title' => 'RSS Feed',
+    ),
+  ));
 }
 
 function ombublog_url_safe_string($string) {

@@ -1,16 +1,22 @@
 <?php
 /**
  * @file
- * ombublog.bean.inc
+ * Listing of blog posts.
  */
 
 class OmbublogList extends BeanPlugin {
+  /**
+   * Implements parent::values().
+   */
   public function values() {
     return array(
       'tid' => FALSE,
     );
   }
 
+  /**
+   * Implements parent::form().
+   */
   public function form($bean, $form, &$form_state) {
     // Get all state terms.
     $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
@@ -37,6 +43,9 @@ class OmbublogList extends BeanPlugin {
     return $form;
   }
 
+  /**
+   * Implements parent::view().
+   */
   public function view($bean, $content, $view_mode = 'default', $langcode = NULL) {
     // Default to current page's state.
     // if ($bean->tid == 'default') {
