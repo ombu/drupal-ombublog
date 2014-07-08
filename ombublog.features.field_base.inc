@@ -65,7 +65,7 @@ function ombublog_field_default_field_bases() {
       'allowed_values' => array(
         0 => array(
           'parent' => 0,
-          'vocabulary' => variable_get('ombublog_vocabulary', ''),
+          'vocabulary' => variable_get('ombublog_category_vocabulary', ''),
         ),
       ),
     ),

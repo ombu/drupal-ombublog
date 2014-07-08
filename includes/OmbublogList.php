@@ -13,7 +13,7 @@ class OmbublogList extends BeanPlugin {
 
   public function form($bean, $form, &$form_state) {
     // Get all state terms.
-    $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_vocabulary', ''));
+    $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
     if ($vocab) {
       $terms = taxonomy_get_tree($vocab->vid, 0, NULL, TRUE);
 

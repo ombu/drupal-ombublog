@@ -10,7 +10,7 @@ Setup
 In order for the multi-section functionality to work, another module needs to 
 define a vocabulary to use for the blog sections (in order to keep the ombublog 
 module as reusable as possible).  This module needs to create the vocabulary and 
-assign the vocabulary machine name to the `ombublog_vocabulary` variable.
+assign the vocabulary machine name to the `ombublog_category_vocabulary` variable.
 
 This can be done either in a feature or in a `hook_install()`.  Here's an
 example of a `hook_install()` implementation:
@@ -27,9 +27,9 @@ example of a `hook_install()` implementation:
 
       );
       taxonomy_vocabulary_save($vocab);
-      variable_set('ombublog_vocabulary', $vocab->machine_name);
+      variable_set('ombublog_category_vocabulary', $vocab->machine_name);
     }
 
 An important note: make sure whatever module loads the blogs vocabulary is
-installed _before_ ombublog, since ombublog depends on the `ombublog_vocabulary`
-variable during install.
+installed _before_ ombublog, since ombublog depends on the
+`ombublog_category_vocabulary` variable during install.

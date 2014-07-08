@@ -61,6 +61,9 @@ function ombublog_field_default_field_instances() {
     'widget_type' => 'text_textarea_with_summary',
   );
 
+  // Load up blog category in order to label field accordingly.
+  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
+
   // Exported field_instance: 'node-blog_post-field_blog'
   $field_instances['node-blog_post-field_blog'] = array(
     'bundle' => 'blog_post',
@@ -89,7 +92,7 @@ function ombublog_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_blog',
-    'label' => 'Blog',
+    'label' => !empty($vocab) ? $vocab->name : 'Blog',
     'required' => 1,
     'settings' => array(
       'user_register_form' => FALSE,

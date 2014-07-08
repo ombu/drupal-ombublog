@@ -23,7 +23,7 @@ define('OMBUBLOG_BASE_PATH', 'blog'); // Base url stem for blog functionality
 define('OMBUBLOG_SEARCH', TRUE); // Enable/Disable blog searching
 
 
-/****
+/**
  * Includes
  */
 if (OMBUBLOG_SEARCH) {
@@ -31,9 +31,37 @@ if (OMBUBLOG_SEARCH) {
 }
 
 
-/****
+/**
  * Module Hooks
  */
+
+/**
+ * Implements hook_menu().
+ */
+function ombublog_menu() {
+  $items = array();
+
+  $items['admin/config/user-interface/ombublog'] = array(
+    'title' => 'Ombu Blog',
+    'description' => 'Configuration for sitewide blog',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ombublog_settings_form'),
+    'access arguments' => array('administer ombublog'),
+    'file' => 'ombublog.admin.inc',
+  );
+
+  if (OMBUBLOG_SEARCH) {
+    $items[OMBUBLOG_BASE_PATH . '/%/search'] = array(
+      'title' => 'Blog',
+      'page callback' => 'ombublog_search_view',
+      'page arguments' => array(1, 3),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+    );
+  }
+
+  return $items;
+}
 
 /**
  * Implements hook_bean_types_api_info().
@@ -77,15 +105,6 @@ function ombublog_theme() {
 }
 
 /**
- * Implements hook_cron().
- */
-function ombublog_cron() {
-  // Delete orphaned blog tags
-  //$ombublog_tags_vid = variable_get('ombublog_tags_vid', 1);
-  //db_query("DELETE FROM td USING {term_data} td LEFT JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.tid IS NULL AND td.vid = %d", $ombublog_tags_vid);
-}
-
-/**
  * Implements hook_permissions().
  */
 function ombublog_permissions() {
@@ -105,24 +124,6 @@ function ombublog_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ombublog']);
     $implementations['ombublog'] = $group;
   }
-}
-/**
- * Implements hook_menu().
- */
-function ombublog_menu() {
-  $items = array();
-
-  if (OMBUBLOG_SEARCH) {
-    $items[OMBUBLOG_BASE_PATH . '/%/search'] = array(
-      'title' => 'Blog',
-      'page callback' => 'ombublog_search_view',
-      'page arguments' => array(1, 3),
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-    );
-  }
-
-  return $items;
 }
 
 /**
@@ -280,9 +281,6 @@ function ombublog_node_view($node, $view_mode, $langcode) {
  */
 function ombublog_preprocess_node(&$variables) {
   if ($variables['node']->type == 'blog_post') {
-    // Include blog css.
-    drupal_add_css(drupal_get_path('module', 'ombublog') . '/ombublog.css');
-
     // Change post date to something more readable.
     if ($variables['submitted']) {
       $date = format_date($variables['node']->created, 'custom', 'D, M j, Y');
@@ -397,7 +395,7 @@ function _ombublog_get_current_blog_tid() {
       $query->leftJoin('taxonomy_vocabulary', 'tv', 'td.vid = tv.vid');
       $query->fields('td');
       $query->fields('tv', array('machine_name'));
-      $query->condition('tv.machine_name', variable_get('ombublog_vocabulary', ''));
+      $query->condition('tv.machine_name', variable_get('ombublog_category_vocabulary', ''));
       $query->where("replace(td.name, ' ', '-') = :name", array(':name' => $name));
       $term = $query->execute()->fetchObject();
 
@@ -415,7 +413,7 @@ function _ombublog_get_blog_list() {
     $query = db_select('taxonomy_term_data', 't');
     $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
     $query->fields('t', array('tid', 'name'));
-    $query->condition('v.machine_name', variable_get('ombublog_vocabulary', ''), '=');
+    $query->condition('v.machine_name', variable_get('ombublog_category_vocabulary', ''), '=');
     $result = $query->execute();
     $data = array();
     while ($record = $result->fetchAssoc()) {

@@ -87,7 +87,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
+    variable_get('ombublog_category_vocabulary', '') => variable_get('ombublog_category_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );
@@ -122,7 +122,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-     variable_get('ombublog_vocabulary', '')=> variable_get('ombublog_vocabulary', ''),
+     variable_get('ombublog_category_vocabulary', '')=> variable_get('ombublog_category_vocabulary', ''),
   );
   $handler->display->display_options['arguments']['tid']['validate_options']['type'] = 'convert';
   $handler->display->display_options['arguments']['tid']['validate_options']['transform'] = TRUE;
@@ -198,7 +198,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
+    variable_get('ombublog_category_vocabulary', '') => variable_get('ombublog_category_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );
@@ -243,7 +243,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['arguments']['tid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['tid']['validate']['type'] = 'taxonomy_term';
   $handler->display->display_options['arguments']['tid']['validate_options']['vocabularies'] = array(
-    variable_get('ombublog_vocabulary', '') => variable_get('ombublog_vocabulary', ''),
+    variable_get('ombublog_category_vocabulary', '') => variable_get('ombublog_category_vocabulary', ''),
     'departments' => 0,
     'tags' => 0,
   );
