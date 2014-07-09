@@ -14,7 +14,7 @@ function ombublog_settings_form($form, &$form_state) {
     $options[$vocab->machine_name] = $vocab->name;
   }
 
-  $form['ombublog_category'] = array(
+  $form['ombublog_category_vocabulary'] = array(
     '#type' => 'select',
     '#title' => t('Category vocabulary'),
     '#description' => t('Select the vocabulary to use for blog categories'),
@@ -22,7 +22,7 @@ function ombublog_settings_form($form, &$form_state) {
     '#options' => $options,
   );
 
-  $form['ombublog_tags'] = array(
+  $form['ombublog_tags_vocabulary'] = array(
     '#type' => 'select',
     '#title' => t('Tag vocabulary'),
     '#description' => t('Select the vocabulary to use for blog tags'),

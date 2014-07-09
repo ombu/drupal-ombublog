@@ -169,6 +169,9 @@ function ombublog_field_default_field_instances() {
     ),
   );
 
+  // Load up blog tags in order to label field accordingly.
+  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_tag_vocabulary', ''));
+
   // Exported field_instance: 'node-blog_post-field_tags'
   $field_instances['node-blog_post-field_tags'] = array(
     'bundle' => 'blog_post',
@@ -199,7 +202,7 @@ function ombublog_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_tags',
-    'label' => 'Tags',
+    'label' => $vocab->name,
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -218,10 +221,8 @@ function ombublog_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Blog');
   t('Body');
   t('Image');
-  t('Tags');
 
   return $field_instances;
 }
