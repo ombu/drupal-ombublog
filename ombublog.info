@@ -33,3 +33,4 @@ features[taxonomy][] = tags
 features[views_view][] = ombublog
 features[views_view][] = ombublog_tags
 files[] = includes/OmbublogList.php
+files[] = includes/OmbublogListStyle.php

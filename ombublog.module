@@ -75,20 +75,44 @@ function ombublog_bean_types_api_info() {
  */
 function ombublog_bean_types() {
   $plugins = array();
-  $plugin_path = drupal_get_path('module', 'ombublog');
 
   $plugins['ombublog_list'] = array(
     'name' => 'ombublog_list',
     'label' => t('Latest Blog Posts'),
     'handler' => array(
-      'class' => 'ombublog_list_bean',
+      'class' => 'OmbublogList',
       'parent' => 'bean_default',
     ),
-    'path' => $plugin_path,
-    'file' => 'ombublog.bean.inc',
+    'path' => drupal_get_path('module', 'ombublog') . '/includes',
+    'file' => 'OmbublogList.php',
     'editable' => TRUE,
   );
+
   return $plugins;
+}
+
+/**
+ * Implements hook_bean_style_info().
+ */
+function ombublog_bean_style_info() {
+  return array(
+    'ombublog_list' => array(
+      'label' => 'Teaser listing',
+      'class' => 'OmbublogListStyle',
+      'bean_types' => array(
+        'ombublog_list',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_bean_style_options_alter().
+ */
+function ombublog_bean_style_options_alter(&$options, $context) {
+  if ($context['bundle'] == 'ombublog_list') {
+    unset($options['']);
+  }
 }
 
 /**
