@@ -67,13 +67,25 @@ function ombublog_bean_types() {
 
   $plugins['ombublog_list'] = array(
     'name' => 'ombublog_list',
-    'label' => t('Latest Blog Posts'),
+    'label' => t('Latest blog posts'),
     'handler' => array(
       'class' => 'OmbublogList',
       'parent' => 'bean_default',
     ),
     'path' => drupal_get_path('module', 'ombublog') . '/includes',
     'file' => 'OmbublogList.php',
+    'editable' => TRUE,
+  );
+
+  $plugins['ombublog_tags'] = array(
+    'name' => 'ombublog_tags',
+    'label' => t('Blog tag cloud'),
+    'handler' => array(
+      'class' => 'OmbublogTags',
+      'parent' => 'bean_default',
+    ),
+    'path' => drupal_get_path('module', 'ombublog') . '/includes',
+    'file' => 'OmbublogTags.php',
     'editable' => TRUE,
   );
 
@@ -447,42 +459,6 @@ QUERY;
   else {
     return '';
   }
-}
-
-function _ombublog_block_get_tags_list() {
-  $blogs_tid = _ombublog_get_current_blog_tid();
-
-  $query = <<<QUERY
-SELECT
-    count(*) AS count,
-    ttd.name AS title,
-    ttd.tid AS tid
-FROM {node} n
-LEFT JOIN {field_data_field_blog} fdfb ON n.nid = fdfb.entity_id
-LEFT JOIN {field_data_field_tags} fdft ON n.nid = fdft.entity_id
-LEFT JOIN {taxonomy_term_data} ttd ON fdft.field_tags_tid = ttd.tid
-WHERE fdfb.field_blog_tid = :blogs_tid
-AND fdft.field_tags_tid IS NOT NULL
-GROUP BY fdft.field_tags_tid
-HAVING count > 0
-QUERY;
-
-  $links = array();
-  $results = db_query($query, array(':blogs_tid' => $blogs_tid));
-  foreach ($results as $row) {
-    $links[] = array(
-      'title' => $row->title . ' (' . $row->count . ')',
-      'href' => ombublog_get_base_url() . '/tags/' . $row->tid . '/' . ombublog_url_safe_string($row->title),
-      'term' => $row,
-    );
-  }
-
-  $content = array(
-    '#theme' => 'links',
-    '#links' => $links,
-  );
-
-  return $content;
 }
 
 function _ombublog_block_get_rss_feed() {
