@@ -61,8 +61,58 @@ function ombublog_field_default_field_instances() {
     'widget_type' => 'text_textarea_with_summary',
   );
 
-  // Load up blog category in order to label field accordingly.
-  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
+  // Exported field_instance: 'node-blog_post-field_authors'
+  $field_instances['node-blog_post-field_authors'] = array(
+    'bundle' => 'blog_post',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Additional optional authors for this blog post.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'entityreference',
+        'settings' => array(
+          'link' => FALSE,
+        ),
+        'type' => 'entityreference_label',
+        'weight' => 4,
+      ),
+      'grid' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_authors',
+    'label' => 'Other authors',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'entityreference',
+      'settings' => array(
+        'match_operator' => 'CONTAINS',
+        'path' => '',
+        'size' => 60,
+      ),
+      'type' => 'entityreference_autocomplete_tags',
+      'weight' => 2,
+    ),
+  );
+
+
+  // Load up blog tags in order to label field accordingly.
+  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_blog_vocabulary', ''));
 
   // Exported field_instance: 'node-blog_post-field_blog'
   $field_instances['node-blog_post-field_blog'] = array(
@@ -184,7 +234,7 @@ function ombublog_field_default_field_instances() {
   );
 
   // Load up blog tags in order to label field accordingly.
-  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_tag_vocabulary', ''));
+  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_tags_vocabulary', ''));
 
   // Exported field_instance: 'node-blog_post-field_tags'
   $field_instances['node-blog_post-field_tags'] = array(
@@ -233,10 +283,49 @@ function ombublog_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'profile2-blog_author-field_display_name'
+  $field_instances['profile2-blog_author-field_display_name'] = array(
+    'bundle' => 'blog_author',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Full name to display on blog posts',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'profile2',
+    'field_name' => 'field_display_name',
+    'label' => 'Display name',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 0,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
+  t('Additional optional authors for this blog post.');
   t('Body');
+  t('Channels');
+  t('Display name');
+  t('Full name to display on blog posts');
   t('Image');
+  t('Other authors');
+  t('Tags');
 
   return $field_instances;
 }

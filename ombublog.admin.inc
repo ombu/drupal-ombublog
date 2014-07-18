@@ -26,7 +26,7 @@ function ombublog_settings_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Tag vocabulary'),
     '#description' => t('Select the vocabulary to use for blog tags'),
-    '#default_value' => variable_get('ombublog_tag_vocabulary', ''),
+    '#default_value' => variable_get('ombublog_tags_vocabulary', ''),
     '#options' => $options,
   );
 

@@ -131,6 +131,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['title'] = 'Blog';
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   $handler->display->display_options['path'] = 'blog/search';
+
   $export['ombublog'] = $view;
 
   return $export;

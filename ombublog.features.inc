@@ -77,3 +77,20 @@ function ombublog_node_info() {
   );
   return $items;
 }
+
+/**
+ * Implements hook_default_profile2_type().
+ */
+function ombublog_default_profile2_type() {
+  $items = array();
+  $items['blog_author'] = entity_import('profile2_type', '{
+    "userCategory" : false,
+    "userView" : false,
+    "type" : "blog_author",
+    "label" : "Blog author",
+    "weight" : "0",
+    "data" : { "registration" : 0, "use_page" : 1, "page_path" : "blog\\/author" },
+    "rdf_mapping" : []
+  }');
+  return $items;
+}

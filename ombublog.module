@@ -51,6 +51,25 @@ function ombublog_menu() {
 }
 
 /**
+ * Implements hook_admin_paths().
+ */
+function ombublog_admin_paths() {
+  $paths = array();
+
+  // Make sure that blog author profiles are treated like content.
+  $type = profile2_type_load('blog_author');
+  if ($type) {
+    $path = profile2_page_get_base_path($type);
+    $paths = array(
+      $path . '/*/edit' => TRUE,
+      $path . '/*/delete' => TRUE,
+    );
+  }
+
+  return $paths;
+}
+
+/**
  * Implements hook_bean_types_api_info().
  */
 function ombublog_bean_types_api_info() {
@@ -123,6 +142,9 @@ function ombublog_theme() {
   return array(
     'taxonomy_comma_list' => array(
       'render element' => 'element',
+    ),
+    'ombublog_archive_list' => array(
+      'variables' => array('options' => array()),
     ),
   );
 }
@@ -217,7 +239,7 @@ function ombublog_block_view($delta = 0) {
 
     case 'archive_list':
       $block['subject'] = t('Archives');
-      $block['content'] = _ombublog_block_get_archives_list();
+      $block['content'] = ombublog_archive_block();
       break;
 
     case 'tags_list':
@@ -259,6 +281,31 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
   $form['basic']['inline']['submit'] = array('#type' => 'submit', '#value' => t('Search Blog'));
 
   return $form;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function ombublog_entity_info_alter(&$entity_info) {
+  // Alter label callback for blog authors in order to show display name as
+  // title.
+  $entity_info['profile2']['label callback'] = 'ombublog_profile2_label';
+}
+
+/**
+ * Label callback for blog author profile.
+ *
+ * Shows display name as label instead of "Blog author".
+ */
+function ombublog_profile2_label($profile) {
+  if ($profile->type == 'blog_author') {
+    $display_name = field_get_items('profile2', $profile, 'field_display_name');
+    if ($display_name) {
+      return $display_name[0]['value'];
+    }
+  }
+
+  return $profile->defaultLabel();
 }
 
 /**
@@ -321,6 +368,46 @@ function ombublog_node_view($node, $view_mode, $langcode) {
 }
 
 /**
+ * Implements hook_preprocess_node().
+ */
+function ombublog_preprocess_node(&$variables) {
+  // Add schema.org microdata to blog posts.
+  if ($variables['type'] == 'blog_post') {
+    $variables['attributes_array']['infoscope'] = '';
+    $variables['attributes_array']['itemtype'] = 'http://schema.org/BlogPosting';
+    $variables['title_attributes_array']['itemprop'] = 'name';
+  }
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function ombublog_entity_view($entity, $type, $view_mode) {
+  if ($type == 'profile2' && $entity->type == 'blog_author' && $view_mode == 'page') {
+    // Add listing of all blog posts by this author.
+    $query = db_select('node', 'n')->extend('PagerDefault');
+    $query->join('field_data_field_authors', 'fa', 'n.nid = fa.entity_id AND fa.deleted = 0');
+
+    $query
+      ->fields('n', array('nid'))
+      ->condition(db_or()->condition('n.uid', $entity->uid)->condition('fa.field_authors_target_id', $entity->uid))
+      ->orderBy('n.created', 'DESC');
+
+    $nids = $query->execute()->fetchCol();
+
+    if ($nids) {
+      $nodes = node_load_multiple($nids);
+      $entity->content['blog_posts'] = array(
+        'nodes' => node_view_multiple($nodes, 'teaser'),
+        'pager' => array(
+          '#theme' => 'pager',
+        ),
+      );
+    }
+  }
+}
+
+/**
  * Implements hook_views_pre_render().
  */
 function ombublog_views_pre_render(&$view) {
@@ -369,7 +456,7 @@ function ombublog_views_pre_render(&$view) {
     }
   }
 
-  if ($filters) {
+  if (isset($filters)) {
     $view->attachment_before .= t('<h3>Posts matching !filters</h3>', array(
       '!filters' => join(' and ', $filters),
     ));
@@ -412,53 +499,78 @@ function theme_taxonomy_comma_list($variables) {
   return $output;
 }
 
-function _ombublog_get_blog_list() {
-  $query = db_select('taxonomy_term_data', 't');
-  $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
-  $query->fields('t', array('tid', 'name'));
-  $query->condition('v.machine_name', variable_get('ombublog_category_vocabulary', ''), '=');
-  $result = $query->execute();
-  $data = array();
-  while ($record = $result->fetchAssoc()) {
-    $data[$record['tid']] = ombublog_url_safe_string($record['name']);
-  }
-  return $data;
-}
-
 /**
  * Block function for the archives list.
  */
-function _ombublog_block_get_archives_list() {
-  $tid = _ombublog_get_current_blog_tid();
+function ombublog_archive_block() {
+  $year = 'YEAR(FROM_UNIXTIME(n.created))';
+  $month = 'MONTH(FROM_UNIXTIME(n.created))';
   $query = <<<QUERY
-SELECT DISTINCT
-YEAR(FROM_UNIXTIME(n.created)) as year,
-MONTH(FROM_UNIXTIME(n.created)) as month
+SELECT
+CONCAT(
+  $year,
+  '-',
+  $month
+) AS date,
+COUNT(*) AS count
 FROM {node} n
-LEFT JOIN {field_data_field_blog} fdfb ON n.nid = fdfb.entity_id
 WHERE
-fdfb.field_blog_tid = :tid AND
 n.type = :type AND
 n.status <> 0
+GROUP BY $year, $month
 ORDER BY
-year DESC,
-month DESC
+$year DESC,
+$month DESC
 QUERY;
+  $results = db_query($query, array(':type' => 'blog_post'))->fetchAllKeyed();
 
-  $content = array();
-  $results = db_query($query, array(':type' => 'blog_post', ':tid' => $tid));
-  while ($r = $results->fetchAssoc()) {
-    $text = date("F Y", mktime(0, 0, 0, $r['month'], date("d"), $r['year']));
-
-    $content[] = l($text, ombublog_get_base_url() . '/' . $r['year'] . sprintf('%02d', $r['month']));
+  // Build up a list of options for all available months between first post and
+  // now.
+  $start_date = db_query('SELECT MIN(created) FROM {node} WHERE type = :type', array(
+    ':type' => 'blog_post',
+  ))->fetchField();
+  $current_date = time();
+  while ($start_date < $current_date) {
+    $key = date('Y-n', $start_date);
+    $options[date('Y', $start_date)][$key] = array(
+      '!month' => date('F', $start_date),
+      '!count' => isset($results[$key]) ? $results[$key] : 0,
+    );
+    $start_date = strtotime(date('m/d/Y', $start_date) . ' + 1 month');
   }
 
-  if (count($content)) {
-    return '<div class="item-list"><ul><li>' . implode('</li><li>', $content) . '</li></ul></div>';
+  return array(
+    '#theme' => 'ombublog_archive_list',
+    '#options' => $options,
+  );
+}
+
+/**
+ * Theme callback for archive list.
+ *
+ * Defaults to select list with optgroups. An option for each month will be
+ * created, and if there are no blog posts in that month the option will be
+ * disabled.
+ */
+function theme_ombublog_archive_list($variables) {
+  // Build up select list. Can't use theme_select() since there's no support for
+  // disabling options, which is needed for options without blog posts.
+  $output = '<select name="blog-archive">';
+  foreach ($variables['options'] as $year => $months) {
+    $output .= '<optgroup label="' . $year . '">';
+
+    foreach ($months as $key => $month) {
+      $output .= t('<option value="!key" !disabled>!month (!count)</option>', array(
+        '!key' => $key,
+        '!disabled' => $month['!count'] ? '' : 'disabled="disabled"',
+      ) + $month);
+    }
+
+    $output .= '</optgroup>';
   }
-  else {
-    return '';
-  }
+  $output .= '</select>';
+
+  return $output;
 }
 
 function _ombublog_block_get_rss_feed() {
