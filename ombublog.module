@@ -25,6 +25,30 @@ define('OMBUBLOG_BASE_PATH', 'blog');
  */
 
 /**
+ * Implements hook_init().
+ */
+function ombublog_init() {
+  // Redirect taxonomy terms managed by ombublog.
+  $item = menu_get_item();
+  if ($item['path'] == 'taxonomy/term/%' && $term = menu_get_object('taxonomy_term', 2)) {
+    if ($term->vocabulary_machine_name == variable_get('ombublog_category_vocabulary', '') && variable_get('ombublog_category_redirect', 0)) {
+      drupal_goto(OMBUBLOG_BASE_PATH . '/search', array(
+        'query' => array(
+          'category' => $term->tid,
+        ),
+      ));
+    }
+    if ($term->vocabulary_machine_name == variable_get('ombublog_tags_vocabulary', '') && variable_get('ombublog_tags_redirect', 1)) {
+      drupal_goto(OMBUBLOG_BASE_PATH . '/search', array(
+        'query' => array(
+          'tags' => $term->name,
+        ),
+      ));
+    }
+  }
+}
+
+/**
  * Implements hook_menu().
  */
 function ombublog_menu() {

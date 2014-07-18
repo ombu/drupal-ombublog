@@ -47,11 +47,11 @@ function ombublog_field_default_field_bases() {
     'entity_types' => array(),
     'field_name' => 'field_authors',
     'foreign keys' => array(
-      'users' => array(
+      'profile' => array(
         'columns' => array(
-          'target_id' => 'uid',
+          'target_id' => 'pid',
         ),
-        'table' => 'users',
+        'table' => 'profile',
       ),
     ),
     'indexes' => array(
@@ -70,12 +70,16 @@ function ombublog_field_default_field_bases() {
           ),
         ),
         'sort' => array(
-          'type' => 'none',
+          'direction' => 'ASC',
+          'field' => 'field_display_name:value',
+          'type' => 'field',
         ),
-        'target_bundles' => array(),
+        'target_bundles' => array(
+          'blog_author' => 'blog_author',
+        ),
       ),
       'profile2_private' => FALSE,
-      'target_type' => 'user',
+      'target_type' => 'profile2',
     ),
     'translatable' => 0,
     'type' => 'entityreference',
