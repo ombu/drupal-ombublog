@@ -160,6 +160,23 @@ function ombublog_bean_style_options_alter(&$options, $context) {
 }
 
 /**
+ * Implements hook_node_info().
+ */
+function ombublog_node_info() {
+  $items = array(
+    'blog_post' => array(
+      'name' => t('Blog Post'),
+      'base' => 'node_content',
+      'description' => t('A post in the blog area.'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'help' => '',
+    ),
+  );
+  return $items;
+}
+
+/**
  * Implements hook_theme().
  */
 function ombublog_theme() {

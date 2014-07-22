@@ -62,23 +62,6 @@ function ombublog_flag_default_flags() {
 }
 
 /**
- * Implements hook_node_info().
- */
-function ombublog_node_info() {
-  $items = array(
-    'blog_post' => array(
-      'name' => t('Blog Post'),
-      'base' => 'node_content',
-      'description' => t('A post in the blog area.'),
-      'has_title' => '1',
-      'title_label' => t('Title'),
-      'help' => '',
-    ),
-  );
-  return $items;
-}
-
-/**
  * Implements hook_default_profile2_type().
  */
 function ombublog_default_profile2_type() {

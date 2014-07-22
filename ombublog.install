@@ -11,4 +11,49 @@
 function ombublog_install() {
   // Set pathauto pattern for blog posts and tags.
   variable_set('pathauto_node_blog_post_pattern', 'blog/[node:created:custom:Y]/[node:created:custom:m]/[node:created:custom:d]/[node:title]');
+
+  variable_set("customauthor_blog_post", array (
+    'enabled' => 1,
+    'multiple_authors' => 1,
+    'multiple_authors_field' => 'field_authors',
+  ));
+
+  ombublog_setup_content_type();
+  ombublog_setup_fields();
+}
+
+/**
+ * Setup blog post content type.
+ */
+function ombublog_setup_content_type() {
+}
+
+/**
+ * Setup default fields for blog post content type.
+ */
+function ombublog_setup_fields() {
+  // Make sure all fields are initialized.
+  cache_clear_all();
+  _field_info_collate_types(TRUE);
+  entity_get_controller('taxonomy_vocabulary')->resetCache();
+
+  // Create fields for the beanslide bean type. Mimics logic found in
+  // features.field.inc, in the field_features_rebuild() function.
+  module_load_include('inc', 'ombublog', 'ombublog.fields');
+  $fields = ombublog_get_default_fields();
+  foreach ($fields['field_config'] as $field) {
+    // Create only.
+    // TODO determine what to do, if anything, if these fields exist already.
+    if (!$existing_field = field_info_field($ffield['field_name'])) {
+      field_create_field($field);
+    }
+  }
+  foreach ($fields['field_instances'] as $field) {
+    // Create field instance (no update, again, see TODO above).
+    if (!$existing_instance = field_info_instance($field['entity_type'], $field['field_name'], $field_instance['bundle'])) {
+      field_create_instance($field);
+    }
+  }
+
+  variable_set('menu_rebuild_needed', TRUE);
 }
