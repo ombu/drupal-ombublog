@@ -227,7 +227,7 @@ class OmbublogList extends BeanPlugin {
     $query->propertyOrderBy('created', 'DESC');
 
     $results = $query->execute();
-    if ($results['node']) {
+    if (!empty($results['node'])) {
       $nodes = node_load_multiple(array_keys($results['node']));
       $content['bean'][$bean->delta]['#nodes'] = $nodes;
 
