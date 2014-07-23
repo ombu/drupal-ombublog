@@ -67,7 +67,7 @@ function ombublog_flag_default_flags() {
 function ombublog_default_profile2_type() {
   $items = array();
   $items['blog_author'] = entity_import('profile2_type', '{
-    "userCategory" : false,
+    "userCategory" : true,
     "userView" : false,
     "type" : "blog_author",
     "label" : "Blog author",

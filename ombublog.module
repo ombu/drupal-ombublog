@@ -205,7 +205,7 @@ function ombublog_permissions() {
  * Implements hook_module_implements_alter().
  */
 function ombublog_module_implements_alter(&$implementations, $hook) {
-  if ($hook == 'form_alter') {
+  if (in_array($hook, array('form_alter', 'profile2_type_load'))) {
     $group = $implementations['ombublog'];
     unset($implementations['ombublog']);
     $implementations['ombublog'] = $group;
@@ -439,12 +439,23 @@ function ombublog_entity_view($entity, $type, $view_mode) {
     if ($nids) {
       $nodes = node_load_multiple($nids);
       $entity->content['blog_posts'] = array(
-        'nodes' => node_view_multiple($nodes, 'teaser'),
+        '#weight' => 100,
+        'nodes' => node_view_multiple($nodes, variable_get('ombublog_author_node_view', 'teaser')),
         'pager' => array(
           '#theme' => 'pager',
         ),
       );
     }
+  }
+}
+
+/**
+ * Implements hook_profile2_type_load().
+ */
+function ombublog_profile2_type_load($types) {
+  // Ensure that blog author profile types are accessible from user screens.
+  if (isset($types['blog_author'])) {
+    $types['blog_author']->userCategory = TRUE;
   }
 }
 
