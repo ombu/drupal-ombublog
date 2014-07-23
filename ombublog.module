@@ -181,9 +181,6 @@ function ombublog_node_info() {
  */
 function ombublog_theme() {
   return array(
-    'taxonomy_comma_list' => array(
-      'render element' => 'element',
-    ),
     'ombublog_archive_list' => array(
       'variables' => array('options' => array()),
     ),
@@ -398,11 +395,6 @@ function ombublog_node_view($node, $view_mode, $langcode) {
     }
   }
 
-  // Render taxonomy terms in a comma seprated list.
-  if (isset($node->content['field_tags'])) {
-    $node->content['field_tags']['#theme'] = 'taxonomy_comma_list';
-  }
-
   // Don't show the link to "feature" this item.
   unset($node->content['links']['flag']);
   unset($node->content['links']['comment']);
@@ -513,42 +505,6 @@ function ombublog_views_pre_render(&$view) {
       '!filters' => join(' and ', $filters),
     ));
   }
-}
-
-/**
- * Theme callback.
- *
- * Renders a list of taxonomy terms in a comma seprated list.
- */
-function theme_taxonomy_comma_list($variables) {
-  if (!isset($variables['element']['#items'])) {
-    return;
-  }
-
-  // Pass variables through field preprocessing, since this isn't actually a
-  // field theme function.
-  template_preprocess_field($variables, '');
-  template_process_field($variables, '');
-
-  $output = '';
-
-  // Render the label, if it's not hidden.
-  if (!$variables['label_hidden']) {
-    $output .= '<div class="field-label"' . $variables['title_attributes'] . '>' . $variables['label'] . ':&nbsp;</div>';
-  }
-
-  // Build links array.
-  $links = array();
-  foreach ($variables['items'] as $delta => $item) {
-    $links[] = drupal_render($item);
-  }
-
-  $output .= implode('<span>, </span>', $links);
-
-  // Render the top-level DIV.
-  $output = '<div class="' . $variables['classes'] . '"' . $variables['attributes'] . '>' . $output . '</div>';
-
-  return $output;
 }
 
 /**
