@@ -18,6 +18,7 @@ class OmbublogList extends BeanPlugin {
       'tags' => array(),
       'date_start' => NULL,
       'date_end' => NULL,
+      'featured' => FALSE,
       'count' => 10,
       'pager' => FALSE,
     );
@@ -140,6 +141,14 @@ class OmbublogList extends BeanPlugin {
       '#suffix' => '</div><div class="date-no-float"></div>',
     );
 
+    // Featured filter.
+    $form['featured'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Filter by featured'),
+      '#description' => t('If checked, only featured blog posts will be shown.'),
+      '#default_value' => $bean->featured,
+    );
+
     $form['count'] = array(
       '#type' => 'select',
       '#title' => t('Count'),
@@ -159,7 +168,7 @@ class OmbublogList extends BeanPlugin {
   }
 
   /**
-   * Implements parent::values().
+   * Implements parent::validate().
    */
   public function validate($values, &$form_state) {
     // Ensure date values are an actual range.
@@ -187,30 +196,42 @@ class OmbublogList extends BeanPlugin {
    * Implements parent::view().
    */
   public function view($bean, $content, $view_mode = 'default', $langcode = NULL) {
-    $query = new EntityFieldQuery();
-    $query
-      ->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', 'blog_post')
-      ->propertyCondition('status', 1);
+    $query = db_select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition('n.type', 'blog_post')
+      ->condition('n.status', 1);
 
     if ($uid = $this->getAuthorFilter($bean)) {
-      $query->propertyCondition('uid', $uid);
+      $query->condition('n.uid', $uid);
     }
 
     if ($category = $this->getCategoryFilter($bean)) {
-      $query->fieldCondition('field_blog', 'tid', $category);
+      $query->leftJoin('field_data_field_blog', 'fb', "n.nid = fb.entity_id AND fb.entity_type = 'node'");
+      $query->condition('fb.field_blog_tid', $category);
     }
 
     if ($tags = $this->getTagsFilter($bean)) {
-      $query->fieldCondition('field_tags', 'tid', $category);
+      $query->leftJoin('field_data_field_tags', 'ft', "n.nid = ft.entity_id AND ft.entity_type = 'node'");
+      $query->condition('field_tags_tid', $tags, 'IN');
     }
 
     if ($bean->date_start) {
-      $query->propertyCondition('created', strtotime($bean->date_start), '>');
+      $query->condition('created', strtotime($bean->date_start), '>');
     }
 
     if ($bean->date_end) {
-      $query->propertyCondition('created', strtotime($bean->date_end), '<');
+      $query->condition('created', strtotime($bean->date_end), '<');
+    }
+
+    // If filtering by featured nodes, also sort by draggable views.
+    if ($bean->featured) {
+      $query->leftJoin('flag_counts', 'flag', "n.nid = flag.entity_id AND flag.entity_type = 'node'");
+      $flag = flag_load('featured');
+      $query->condition('flag.fid', $flag->fid);
+
+      $query->leftJoin('draggableviews_structure', 'dv', 'n.nid = dv.entity_id');
+      $query->condition('dv.view_name', 'manage_content_blog');
+      $query->orderBy('dv.weight');
     }
 
     if ($bean->pager) {
@@ -224,11 +245,11 @@ class OmbublogList extends BeanPlugin {
       $query->range(0, $bean->count);
     }
 
-    $query->propertyOrderBy('created', 'DESC');
+    $query->orderBy('n.created', 'DESC');
 
-    $results = $query->execute();
-    if (!empty($results['node'])) {
-      $nodes = node_load_multiple(array_keys($results['node']));
+    $results = $query->execute()->fetchCol();
+    if ($results) {
+      $nodes = node_load_multiple($results);
       $content['bean'][$bean->delta]['#nodes'] = $nodes;
 
       // Let any bean styles alter content.

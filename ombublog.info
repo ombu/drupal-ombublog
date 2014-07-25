@@ -27,6 +27,7 @@ features[ctools][] = views:views_default:3.0
 features[features_api][] = api:2
 features[flag][] = featured
 features[profile2_type][] = blog_author
+features[views_view][] = manage_content_blog
 features[views_view][] = ombublog
 files[] = includes/OmbublogList.php
 files[] = includes/OmbublogTags.php
