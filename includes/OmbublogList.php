@@ -225,13 +225,13 @@ class OmbublogList extends BeanPlugin {
 
     // If filtering by featured nodes, also sort by draggable views.
     if ($bean->featured) {
-      $query->leftJoin('flag_counts', 'flag', "n.nid = flag.entity_id AND flag.entity_type = 'node'");
-      $flag = flag_load('featured');
-      $query->condition('flag.fid', $flag->fid);
+      // $query->leftJoin('flag_counts', 'flag', "n.nid = flag.entity_id AND flag.entity_type = 'node'");
+      // $flag = flag_load('featured');
+      // $query->condition('flag.fid', $flag->fid);
 
-      $query->leftJoin('draggableviews_structure', 'dv', 'n.nid = dv.entity_id');
-      $query->condition('dv.view_name', 'manage_content_blog');
-      $query->orderBy('dv.weight');
+      // $query->leftJoin('draggableviews_structure', 'dv', 'n.nid = dv.entity_id');
+      // $query->condition('dv.view_name', 'manage_content_blog');
+      // $query->orderBy('dv.weight');
     }
 
     if ($bean->pager) {
