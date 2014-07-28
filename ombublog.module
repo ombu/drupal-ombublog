@@ -495,9 +495,9 @@ function ombublog_profile2_type_load($types) {
 }
 
 /**
- * Implements hook_views_pre_render().
+ * Implements hook_views_post_execute().
  */
-function ombublog_views_pre_render(&$view) {
+function ombublog_views_post_execute(&$view) {
   // Add contextual title based on searched input.
   if ($view->name == 'ombublog' && $view->current_display == 'ombublog_listing') {
     $filters = array();
@@ -538,7 +538,7 @@ function ombublog_views_pre_render(&$view) {
     };
 
     $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
-    if (!empty($input['category']) && $category = explode(',', $input['category'])) {
+    if (!empty($input['category']) && $input['category'] != 'All' && $category = explode(',', $input['category'])) {
       $terms = taxonomy_term_load_multiple($category);
       $filters[] = $term_formatter('category', $terms, $vocab);
     }
@@ -563,9 +563,9 @@ function ombublog_views_pre_render(&$view) {
   }
 
   if (!empty($filters)) {
-    $view->attachment_before .= t('<h3>Posts matching !filters</h3>', array(
-      '!filters' => join(' and ', $filters),
-    ));
+    $view->set_title(t('<h3>Posts matching !filters</h3>', array(
+      '!filters' => implode(' and ', $filters),
+    )));
   }
 }
 
