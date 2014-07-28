@@ -607,7 +607,6 @@ function ombublog_views_default_views() {
     'default' => 0,
   );
   $handler->display->display_options['inherit_exposed_filters'] = TRUE;
-
   $export['manage_content_blog'] = $view;
 
   $view = new view();
@@ -628,6 +627,9 @@ function ombublog_views_default_views() {
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Apply filters';
+  $handler->display->display_options['exposed_form']['options']['reset_button'] = TRUE;
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Clear all filters';
   $handler->display->display_options['pager']['type'] = 'full';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'node';
@@ -660,59 +662,20 @@ function ombublog_views_default_views() {
   $handler->display->display_options['filters']['type']['value'] = array(
     'blog_post' => 'blog_post',
   );
+  $handler->display->display_options['filters']['type']['group'] = 1;
   $handler->display->display_options['filters']['type']['expose']['operator'] = FALSE;
   /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
   $handler->display->display_options['filters']['status']['value'] = '1';
+  $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-
-  // Load up blog category in order to label field accordingly.
-  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
-
-  /* Filter criterion: Content: Channels (field_blog) */
-  $handler->display->display_options['filters']['field_blog_tid']['id'] = 'field_blog_tid';
-  $handler->display->display_options['filters']['field_blog_tid']['table'] = 'field_data_field_blog';
-  $handler->display->display_options['filters']['field_blog_tid']['field'] = 'field_blog_tid';
-  $handler->display->display_options['filters']['field_blog_tid']['exposed'] = TRUE;
-  $handler->display->display_options['filters']['field_blog_tid']['expose']['operator_id'] = 'field_blog_tid_op';
-  $handler->display->display_options['filters']['field_blog_tid']['expose']['label'] = $vocab->name;
-  $handler->display->display_options['filters']['field_blog_tid']['expose']['operator'] = 'field_blog_tid_op';
-  $handler->display->display_options['filters']['field_blog_tid']['expose']['identifier'] = 'category';
-  $handler->display->display_options['filters']['field_blog_tid']['expose']['remember_roles'] = array(
-    2 => '2',
-    1 => 0,
-    3 => 0,
-    4 => 0,
-  );
-  $handler->display->display_options['filters']['field_blog_tid']['type'] = 'select';
-  $handler->display->display_options['filters']['field_blog_tid']['vocabulary'] = 'channel';
-
-  // Load up blog tags in order to label field accordingly.
-  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_tags_vocabulary', ''));
-
-  /* Filter criterion: Content: Tags (field_tags) */
-  $handler->display->display_options['filters']['field_tags_tid']['id'] = 'field_tags_tid';
-  $handler->display->display_options['filters']['field_tags_tid']['table'] = 'field_data_field_tags';
-  $handler->display->display_options['filters']['field_tags_tid']['field'] = 'field_tags_tid';
-  $handler->display->display_options['filters']['field_tags_tid']['value'] = '';
-  $handler->display->display_options['filters']['field_tags_tid']['exposed'] = TRUE;
-  $handler->display->display_options['filters']['field_tags_tid']['expose']['operator_id'] = 'field_tags_tid_op';
-  $handler->display->display_options['filters']['field_tags_tid']['expose']['label'] = $vocab->name;
-  $handler->display->display_options['filters']['field_tags_tid']['expose']['operator'] = 'field_tags_tid_op';
-  $handler->display->display_options['filters']['field_tags_tid']['expose']['identifier'] = 'tags';
-  $handler->display->display_options['filters']['field_tags_tid']['expose']['remember_roles'] = array(
-    2 => '2',
-    1 => 0,
-    3 => 0,
-    4 => 0,
-  );
-  $handler->display->display_options['filters']['field_tags_tid']['vocabulary'] = 'tags';
   /* Filter criterion: Search: Search Terms */
   $handler->display->display_options['filters']['keys']['id'] = 'keys';
   $handler->display->display_options['filters']['keys']['table'] = 'search_index';
   $handler->display->display_options['filters']['keys']['field'] = 'keys';
+  $handler->display->display_options['filters']['keys']['group'] = 1;
   $handler->display->display_options['filters']['keys']['exposed'] = TRUE;
   $handler->display->display_options['filters']['keys']['expose']['operator_id'] = 'keys_op';
   $handler->display->display_options['filters']['keys']['expose']['label'] = 'Search Terms';
@@ -725,10 +688,75 @@ function ombublog_views_default_views() {
     4 => 0,
   );
 
+  // Load up blog tags in order to label field accordingly.
+  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_tags_vocabulary', ''));
+
+  /* Filter criterion: Content: Tags (field_tags) */
+  $handler->display->display_options['filters']['field_tags_tid']['id'] = 'field_tags_tid';
+  $handler->display->display_options['filters']['field_tags_tid']['table'] = 'field_data_field_tags';
+  $handler->display->display_options['filters']['field_tags_tid']['field'] = 'field_tags_tid';
+  $handler->display->display_options['filters']['field_tags_tid']['group'] = 1;
+  $handler->display->display_options['filters']['field_tags_tid']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_tags_tid']['expose']['operator_id'] = 'field_tags_tid_op';
+  $handler->display->display_options['filters']['field_tags_tid']['expose']['label'] = $vocab->name;
+  $handler->display->display_options['filters']['field_tags_tid']['expose']['operator'] = 'field_tags_tid_op';
+  $handler->display->display_options['filters']['field_tags_tid']['expose']['identifier'] = 'tags';
+  $handler->display->display_options['filters']['field_tags_tid']['expose']['multiple'] = TRUE;
+  $handler->display->display_options['filters']['field_tags_tid']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    5 => 0,
+  );
+  $handler->display->display_options['filters']['field_tags_tid']['type'] = 'select';
+  $handler->display->display_options['filters']['field_tags_tid']['vocabulary'] = 'tags';
+  $handler->display->display_options['filters']['field_tags_tid']['error_message'] = FALSE;
+
+  // Load up blog category in order to label field accordingly.
+  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
+
+  /* Filter criterion: Content: Channels (field_blog) */
+  $handler->display->display_options['filters']['field_blog_tid']['id'] = 'field_blog_tid';
+  $handler->display->display_options['filters']['field_blog_tid']['table'] = 'field_data_field_blog';
+  $handler->display->display_options['filters']['field_blog_tid']['field'] = 'field_blog_tid';
+  $handler->display->display_options['filters']['field_blog_tid']['group'] = 1;
+  $handler->display->display_options['filters']['field_blog_tid']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_blog_tid']['expose']['operator_id'] = 'field_blog_tid_op';
+  $handler->display->display_options['filters']['field_blog_tid']['expose']['label'] = $vocab->name;
+  $handler->display->display_options['filters']['field_blog_tid']['expose']['operator'] = 'field_blog_tid_op';
+  $handler->display->display_options['filters']['field_blog_tid']['expose']['identifier'] = 'category';
+  $handler->display->display_options['filters']['field_blog_tid']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    5 => 0,
+  );
+  $handler->display->display_options['filters']['field_blog_tid']['type'] = 'select';
+  $handler->display->display_options['filters']['field_blog_tid']['vocabulary'] = 'channel';
+  /* Filter criterion: Content: Other authors (field_authors) */
+  $handler->display->display_options['filters']['field_authors_target_id']['id'] = 'field_authors_target_id';
+  $handler->display->display_options['filters']['field_authors_target_id']['table'] = 'field_data_field_authors';
+  $handler->display->display_options['filters']['field_authors_target_id']['field'] = 'field_authors_target_id';
+  $handler->display->display_options['filters']['field_authors_target_id']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_authors_target_id']['expose']['operator_id'] = 'field_authors_target_id_op';
+  $handler->display->display_options['filters']['field_authors_target_id']['expose']['label'] = 'Author';
+  $handler->display->display_options['filters']['field_authors_target_id']['expose']['operator'] = 'field_authors_target_id_op';
+  $handler->display->display_options['filters']['field_authors_target_id']['expose']['identifier'] = 'field_authors_target_id';
+  $handler->display->display_options['filters']['field_authors_target_id']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    4 => 0,
+    5 => 0,
+  );
+
   /* Display: Blog listing */
   $handler = $view->new_display('page', 'Blog listing', 'ombublog_listing');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Blog';
+  $handler->display->display_options['exposed_block'] = TRUE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   $handler->display->display_options['path'] = 'blog/search';
   $export['ombublog'] = $view;

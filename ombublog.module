@@ -71,6 +71,13 @@ function ombublog_menu() {
     'type' => MENU_CALLBACK,
   );
 
+  $items[OMBUBLOG_BASE_PATH . 'author/autocomplete'] = array(
+    'title' => 'Blog author autocomplete',
+    'page callback' => 'ombublog_author_autocomplete',
+    'access arguments' => array('access contnet'),
+    'type' => MENU_CALLBACK,
+  );
+
   return $items;
 }
 
@@ -301,7 +308,6 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
   drupal_add_css(drupal_get_path('module', 'search') .'/search.css', 'module', 'all', FALSE);
 
   $form = array(
-    '#action' => base_path() . OMBUBLOG_BASE_PATH . '/search',
     '#attributes' => array('class' => 'search-form'),
   );
   $form['basic']['inline'] = array('#prefix' => '<div class="container-inline">', '#suffix' => '</div>');
@@ -319,6 +325,20 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
   $form['basic']['inline']['submit'] = array('#type' => 'submit', '#value' => t('Search Blog'));
 
   return $form;
+}
+
+/**
+ * Submit handler for search form.
+ */
+function ombublog_search_form_submit($form, &$form_state) {
+  $form_state['redirect'] = array(
+    base_path() . OMBUBLOG_BASE_PATH . '/search',
+    array(
+      'query' => array(
+        'keys' => $form_state['values']['keys'],
+      ),
+    ),
+  );
 }
 
 /**
@@ -353,6 +373,29 @@ function ombublog_form_alter(&$form, $form_state, $form_id) {
   // Hide the path tab for blog posts.
   if ($form_id == 'blog_post_node_form') {
     $form['path']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ombublog_form_views_exposed_form_alter(&$form, $form_state) {
+  if ($form_state['view']->name == 'ombublog' && $form_state['view']->current_display == 'ombublog_listing') {
+    if (isset($form['field_authors_target_id'])) {
+      $pids = db_query("SELECT pid FROM {profile} WHERE type = :type", array(
+        ':type' => 'blog_author',
+      ))->fetchCol();
+      $profiles = profile2_load_multiple($pids);
+      foreach ($profiles as $profile) {
+        $options[$profile->pid] = entity_label('profile2', $profile);
+      }
+
+      $form['field_authors_target_id'] = array(
+        '#type' => 'select',
+        '#options' => array('' => t('- Any -')) + $options,
+        '#default_value' => $form['field_authors_target_id']['#default_value'],
+      );
+    }
   }
 }
 
@@ -459,48 +502,67 @@ function ombublog_views_pre_render(&$view) {
   if ($view->name == 'ombublog' && $view->current_display == 'ombublog_listing') {
     $filters = array();
 
+    $input = $view->exposed_input;
+
     // Anonymous function to help format taxonomy term inputs.
-    $term_formatter = function($terms, $vocab) {
+    $term_formatter = function($key, $terms, $vocab) use($input) {
       $output = '';
 
       $items = array();
       foreach ($terms as $term) {
-        $items[] = entity_label('taxonomy_term', $term);
+        // Clone input in order to provide a link to remove filter.
+        $query = $input;
+        if (is_array($query[$key])) {
+          unset($query[$key][array_search($term->tid, $query[$key])]);
+        }
+        else {
+          unset($query[$key]);
+        }
+
+        $items[] = l(entity_label('taxonomy_term', $term), current_path(), array(
+          'query' => $query,
+          'attributes' => array(
+            'class' => array('search-close'),
+          ),
+        ));
       }
 
       if ($items) {
-        $output = t('!vocab %items', array(
+        $output = t('!vocab !items', array(
           '!vocab' => strtolower($vocab->name),
-          '%items' => join(', ', $items),
+          '!items' => implode(', ', $items),
         ));
       }
 
       return $output;
     };
 
-    if (isset($view->exposed_input['category']) && $category = explode(',', $view->exposed_input['category'])) {
+    $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
+    if (!empty($input['category']) && $category = explode(',', $input['category'])) {
       $terms = taxonomy_term_load_multiple($category);
-      $filters[] = $term_formatter($terms, taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', '')));
+      $filters[] = $term_formatter('category', $terms, $vocab);
     }
-    if (isset($view->exposed_input['keys']) && $keys = trim($view->exposed_input['keys'])) {
+
+    if (!empty($input['keys']) && $keys = trim($input['keys'])) {
       $filters[] = t('keywords %keys', array(
         '%keys' => $keys,
       ));
     }
-    if (isset($view->exposed_input['tags']) && $tags = explode(',', $view->exposed_input['tags'])) {
+
+    $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_tags_vocabulary', ''));
+    if (!empty($input['tags'])) {
       $terms = array();
-      foreach ($tags as $tag) {
-        $term = taxonomy_get_term_by_name($tag);
+      foreach ($input['tags'] as $tag) {
+        $term = taxonomy_term_load($tag);
         if ($term) {
-          $terms[] = current($term)->tid;
+          $terms[$term->tid] = $term;
         }
       }
-      $terms = taxonomy_term_load_multiple($terms);
-      $filters[] = $term_formatter($terms, taxonomy_vocabulary_machine_name_load(variable_get('ombublog_tags_vocabulary', '')));
+      $filters[] = $term_formatter('tags', $terms, $vocab);
     }
   }
 
-  if (isset($filters)) {
+  if (!empty($filters)) {
     $view->attachment_before .= t('<h3>Posts matching !filters</h3>', array(
       '!filters' => join(' and ', $filters),
     ));
@@ -595,4 +657,19 @@ function ombublog_url_safe_string($string) {
   $string = preg_replace('/[^A-Za-z0-9\-_]/', '', $string);
   $string = preg_replace('/\-+/', '-', $string);
   return $string;
+}
+
+/**
+ * Autocomplete callback for blog authors.
+ */
+function ombublog_author_autocomplete($string = '') {
+  $matches = array();
+  if ($string) {
+    $result = db_select('users')->fields('users', array('name'))->condition('name', db_like($string) . '%', 'LIKE')->range(0, 10)->execute();
+    foreach ($result as $user) {
+      $matches[$user->name] = check_plain($user->name);
+    }
+  }
+
+  drupal_json_output($matches);
 }
