@@ -41,7 +41,7 @@ function ombublog_init() {
     if ($term->vocabulary_machine_name == variable_get('ombublog_tags_vocabulary', '') && variable_get('ombublog_tags_redirect', 1)) {
       drupal_goto(OMBUBLOG_BASE_PATH . '/search', array(
         'query' => array(
-          'tags' => $term->name,
+          'tags' => array($term->tid),
         ),
       ));
     }
