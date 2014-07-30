@@ -318,11 +318,11 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
     '#maxlength' => 255,
     '#size' => 30,
   );
-  $form['basic']['inline']['keys']['#attributes']['placeholder'] = 'Keywords';
+  $form['basic']['inline']['keys']['#attributes']['placeholder'] = 'Search the blog';
   // processed_keys is used to coordinate keyword passing between other forms
   // that hook into the basic search form.
   $form['basic']['inline']['processed_keys'] = array('#type' => 'value', '#value' => array());
-  $form['basic']['inline']['submit'] = array('#type' => 'submit', '#value' => t('Search Blog'));
+  $form['basic']['inline']['submit'] = array('#markup' => '<button type="submit"><span>' . t('Search Blog') . '</span>');
 
   return $form;
 }
