@@ -10,8 +10,8 @@ class OmbublogList extends BeanPlugin {
    */
   public function values() {
     return array(
-      'uid_type' => 'none',
-      'uid' => NULL,
+      'author_type' => 'none',
+      'author' => NULL,
       'category_type' => 'none',
       'category' => NULL,
       'tags_type' => 'none',
@@ -28,7 +28,7 @@ class OmbublogList extends BeanPlugin {
    * Implements parent::form().
    */
   public function form($bean, $form, &$form_state) {
-    $form['uid_type'] = array(
+    $form['author_type'] = array(
       '#type' => 'radios',
       '#title' => t('Filter by author:'),
       '#options' => array(
@@ -36,18 +36,18 @@ class OmbublogList extends BeanPlugin {
         'context' => t('Based on the visitors context'),
         'manual' => t('Manually selected'),
       ),
-      '#default_value' => $bean->uid_type,
+      '#default_value' => $bean->author_type,
     );
 
-    $form['uid'] = array(
+    $form['author'] = array(
       '#type' => 'textfield',
       '#title' => t('Author'),
       '#autocomplete_path' => 'user/autocomplete',
-      '#default_value' => $bean->uid,
+      '#default_value' => $bean->author,
       '#description' => t('Show blog posts from selected user.'),
       '#states' => array(
         'visible' => array(
-          ':input[name="uid_type"]' => array('value' => 'manual'),
+          ':input[name="author_type"]' => array('value' => 'manual'),
         ),
       ),
     );
@@ -196,6 +196,26 @@ class OmbublogList extends BeanPlugin {
    * Implements parent::view().
    */
   public function view($bean, $content, $view_mode = 'default', $langcode = NULL) {
+    $query = $this->getQuery($bean);
+
+    $results = $query->execute()->fetchCol();
+    if ($results) {
+      $nodes = node_load_multiple($results);
+      $content['bean'][$bean->delta]['#nodes'] = $nodes;
+
+      // Let any bean styles alter content.
+      if (module_exists('bean_style')) {
+        bean_style_view_alter($content, $bean);
+      }
+    }
+
+    return $content;
+  }
+
+  /**
+   * Returns the query object with filters applied.
+   */
+  protected function getQuery($bean) {
     $query = db_select('node', 'n')
       ->fields('n', array('nid'))
       ->condition('n.type', 'blog_post')
@@ -247,25 +267,14 @@ class OmbublogList extends BeanPlugin {
 
     $query->orderBy('n.created', 'DESC');
 
-    $results = $query->execute()->fetchCol();
-    if ($results) {
-      $nodes = node_load_multiple($results);
-      $content['bean'][$bean->delta]['#nodes'] = $nodes;
-
-      // Let any bean styles alter content.
-      if (module_exists('bean_style')) {
-        bean_style_view_alter($content, $bean);
-      }
-    }
-
-    return $content;
+    return $query;
   }
 
   /**
    * Gets proper author uid based on configured type.
    */
   protected function getAuthorFilter($bean) {
-    switch ($bean->uid_type) {
+    switch ($bean->author_type) {
       case 'none':
         return NULL;
         break;
