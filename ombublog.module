@@ -386,15 +386,17 @@ function ombublog_form_views_exposed_form_alter(&$form, $form_state) {
         ':type' => 'blog_author',
       ))->fetchCol();
       $profiles = profile2_load_multiple($pids);
-      foreach ($profiles as $profile) {
-        $options[$profile->pid] = entity_label('profile2', $profile);
-      }
+      if ($profiles) {
+        foreach ($profiles as $profile) {
+          $options[$profile->pid] = entity_label('profile2', $profile);
+        }
 
-      $form['field_authors_target_id'] = array(
-        '#type' => 'select',
-        '#options' => array('' => t('- Any -')) + $options,
-        '#default_value' => $form['field_authors_target_id']['#default_value'],
-      );
+        $form['field_authors_target_id'] = array(
+          '#type' => 'select',
+          '#options' => array('' => t('- Any -')) + $options,
+          '#default_value' => $form['field_authors_target_id']['#default_value'],
+        );
+      }
     }
   }
 }
