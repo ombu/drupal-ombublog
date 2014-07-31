@@ -70,20 +70,17 @@ function ombublog_field_default_field_bases() {
     'locked' => 0,
     'module' => 'entityreference',
     'settings' => array(
-      'handler' => 'base',
+      'handler' => 'views',
       'handler_settings' => array(
         'behaviors' => array(
           'views-select-list' => array(
             'status' => 0,
           ),
         ),
-        'sort' => array(
-          'direction' => 'ASC',
-          'field' => 'field_display_name:value',
-          'type' => 'field',
-        ),
-        'target_bundles' => array(
-          'blog_author' => 'blog_author',
+        'view' => array(
+          'args' => array(),
+          'display_name' => 'entityreference_1',
+          'view_name' => 'ombublog_author_complete',
         ),
       ),
       'profile2_private' => FALSE,
