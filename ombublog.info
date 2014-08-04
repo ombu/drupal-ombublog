@@ -13,7 +13,6 @@ dependencies[] = field_group
 dependencies[] = flag
 dependencies[] = image
 dependencies[] = media
-dependencies[] = navex_blog_base
 dependencies[] = ombuslide
 dependencies[] = options
 dependencies[] = pathauto
