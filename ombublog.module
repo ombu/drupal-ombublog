@@ -521,10 +521,12 @@ function ombublog_views_post_execute(&$view) {
           unset($query[$key]);
         }
 
-        $items[] = l(entity_label('taxonomy_term', $term), current_path(), array(
+        $items[] = l(entity_label('taxonomy_term', $term) . '&nbsp;<strong class="remove-filter"><span>' . t('(Remove filter)') . '</span></strong>', current_path(), array(
           'query' => $query,
+          'html' => TRUE,
           'attributes' => array(
-            'class' => array('search-close'),
+            'class' => array('filter-active'),
+            'title' => t('Click to remove filter'),
           ),
         ));
       }
