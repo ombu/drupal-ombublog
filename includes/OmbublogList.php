@@ -265,6 +265,9 @@ class OmbublogList extends BeanPlugin {
       $query->range(0, $bean->count);
     }
 
+    // Add tag so modules can alter query.
+    $query->addTag('ombublog_list');
+
     $query->orderBy('n.created', 'DESC');
 
     return $query;
