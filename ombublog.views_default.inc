@@ -755,7 +755,7 @@ function ombublog_views_default_views() {
   /* Display: Blog listing */
   $handler = $view->new_display('page', 'Blog listing', 'ombublog_listing');
   $handler->display->display_options['defaults']['title'] = FALSE;
-  $handler->display->display_options['title'] = 'Blog';
+  $handler->display->display_options['title'] = 'All articles';
   $handler->display->display_options['exposed_block'] = TRUE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   $handler->display->display_options['path'] = 'blog/search';
