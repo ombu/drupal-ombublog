@@ -548,8 +548,13 @@ function ombublog_views_post_execute(&$view) {
     }
 
     if (!empty($input['keys']) && $keys = trim($input['keys'])) {
-      $filters[] = t('keywords %keys', array(
-        '%keys' => $keys,
+      $query = $input;
+      unset($query['keys']);
+      $filters[] = t('keywords <a class="filter-active active" title="Click to remove filter" href="!url">!keys&nbsp;<strong class="remove-filter"><span>Remove filter</span></strong></a>', array(
+        '!url' => url(current_path(), array(
+          'query' => $query,
+        )),
+        '!keys' => $keys,
       ));
     }
 
@@ -567,7 +572,7 @@ function ombublog_views_post_execute(&$view) {
   }
 
   if (!empty($filters)) {
-    $view->set_title(t('<h3>Posts matching !filters</h3>', array(
+    $view->set_title(t('<h3>Articles matching !filters</h3>', array(
       '!filters' => implode(' and ', $filters),
     )));
   }
