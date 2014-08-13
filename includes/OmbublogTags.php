@@ -91,7 +91,7 @@ class OmbublogTags extends BeanPlugin {
     if (!empty($bean->date_start) || !empty($bean->date_end) || $bean->sort == 'count') {
       $query->leftJoin('field_data_field_tags', 'ft', 'td.tid = ft.field_tags_tid');
       $query->addExpression('COUNT(ft.entity_id)', 'node_count');
-      $query->groupBy('ft.entity_id');
+      $query->groupBy('td.tid');
     }
 
     if ($bean->date_start || $bean->date_end) {
