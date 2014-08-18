@@ -438,6 +438,17 @@ function ombublog_node_view($node, $view_mode, $langcode) {
         );
       }
     }
+    if ($view_mode == 'rss') {
+      // Add read more link for rss feeds.
+      $link['node'] = array(
+        'title' => t('Continue reading !title »', array(
+          '!title' => $node->title,
+        )),
+        'href' => 'node/' . $node->nid,
+      );
+
+      $node->content['links']['node']['#links'] = $link;
+    }
   }
 
   // Don't show the link to "feature" this item.

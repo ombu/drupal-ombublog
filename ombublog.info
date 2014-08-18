@@ -33,6 +33,7 @@ features[schemaorg][] = node-blog_post
 features[views_view][] = manage_content_blog
 features[views_view][] = ombublog
 features[views_view][] = ombublog_author_complete
+features[views_view][] = ombublog_feed
 files[] = includes/OmbublogList.php
 files[] = includes/OmbublogTags.php
 files[] = includes/OmbublogListStyle.php
