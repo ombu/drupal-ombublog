@@ -506,8 +506,20 @@ function ombublog_views_post_execute(&$view) {
 
     $input = $view->exposed_input;
 
+    // Anonymous function to format a filter link.
+    $filter_link_formatter = function($label, $query) {
+      return l($label . '&nbsp;<strong class="remove-filter"><span>' . t('(Remove filter)') . '</span></strong>', current_path(), array(
+        'query' => $query,
+        'html' => TRUE,
+        'attributes' => array(
+          'class' => array('filter-active'),
+          'title' => t('Click to remove filter'),
+        ),
+      ));
+    };
+
     // Anonymous function to help format taxonomy term inputs.
-    $term_formatter = function($key, $terms, $vocab) use($input) {
+    $term_formatter = function($key, $terms) use($input, $filter_link_formatter) {
       $output = '';
 
       $items = array();
@@ -521,40 +533,40 @@ function ombublog_views_post_execute(&$view) {
           unset($query[$key]);
         }
 
-        $items[] = l(entity_label('taxonomy_term', $term) . '&nbsp;<strong class="remove-filter"><span>' . t('(Remove filter)') . '</span></strong>', current_path(), array(
-          'query' => $query,
-          'html' => TRUE,
-          'attributes' => array(
-            'class' => array('filter-active'),
-            'title' => t('Click to remove filter'),
-          ),
-        ));
+        $items[] = $filter_link_formatter(entity_label('taxonomy_term', $term), $query);
       }
 
       if ($items) {
-        $output = t('!vocab !items', array(
-          '!vocab' => strtolower($vocab->name),
-          '!items' => implode(', ', $items),
-        ));
+        return implode(', ', $items);
       }
 
       return $output;
     };
 
+    if (!empty($input['field_authors_target_id'])) {
+      $profile = profile2_load($input['field_authors_target_id']);
+      if ($profile) {
+        $query = $input;
+        unset($query['field_authors_target_id']);
+        $filters[] = t('by !author', array(
+          '!author' => $filter_link_formatter(entity_label('profile2', $profile), $query),
+        ));
+      }
+    }
+
     $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
     if (!empty($input['category']) && $input['category'] != 'All' && $category = explode(',', $input['category'])) {
       $terms = taxonomy_term_load_multiple($category);
-      $filters[] = $term_formatter('category', $terms, $vocab);
+      $filters[] = t('in !channel', array(
+        '!channel' => $term_formatter('category', $terms, $vocab),
+      ));
     }
 
     if (!empty($input['keys']) && $keys = trim($input['keys'])) {
       $query = $input;
       unset($query['keys']);
-      $filters[] = t('keywords <a class="filter-active active" title="Click to remove filter" href="!url">!keys&nbsp;<strong class="remove-filter"><span>Remove filter</span></strong></a>', array(
-        '!url' => url(current_path(), array(
-          'query' => $query,
-        )),
-        '!keys' => $keys,
+      $filters[] = t('containing !link', array(
+        '!link' => $filter_link_formatter('<span>"</span>' . $keys . '<span>"</span>', $query),
       ));
     }
 
@@ -567,14 +579,20 @@ function ombublog_views_post_execute(&$view) {
           $terms[$term->tid] = $term;
         }
       }
-      $filters[] = $term_formatter('tags', $terms, $vocab);
+      $filters[] = t('tagged !terms', array(
+        '!terms' => $term_formatter('tags', $terms, $vocab),
+      ));
     }
-  }
 
-  if (!empty($filters)) {
-    $view->set_title(t('<h3>Articles matching !filters</h3>', array(
-      '!filters' => implode(' and ', $filters),
-    )));
+    if (!empty($filters)) {
+      if (count($filters) > 1) {
+        $filters[] = ' <span>and</span> ' . array_pop($filters);
+      }
+
+      $view->set_title(t('<h3>Articles !filters</h3>', array(
+        '!filters' => implode(', ', $filters),
+      )));
+    }
   }
 }
 
