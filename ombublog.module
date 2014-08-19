@@ -661,7 +661,7 @@ function ombublog_views_post_execute(&$view) {
       }
 
       $view->set_title(t('<h3>Articles !filters</h3>', array(
-        '!filters' => implode(', ', $filters),
+        '!filters' => count($filters) > 2 ? implode(', ', $filters) : implode(' ', $filters),
       )));
     }
   }
