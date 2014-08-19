@@ -17,7 +17,9 @@ class OmbublogListStyle extends BeanStyle {
   public function prepareView($build, $bean) {
     parent::prepareView($build, $bean);
 
-    $build['nodes'] = node_view_multiple($build['#nodes'], $this->display_mode);
+    if (!empty($build['#nodes'])) {
+      $build['nodes'] = node_view_multiple($build['#nodes'], $this->display_mode);
+    }
 
     return $build;
   }
