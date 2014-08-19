@@ -508,6 +508,21 @@ function ombublog_profile2_type_load($types) {
 }
 
 /**
+ * Implements hook_user_view().
+ */
+function ombublog_user_view($account, $view_mode, $langcode) {
+  if ($profile = profile2_load_by_user($account)) {
+    $profile_type = profile2_type_load('blog_author');
+    $account->content['summary']['blog_author_profile'] = array(
+      '#type' => 'user_profile_item',
+      '#title' => t('Blog author'),
+      '#markup' => l(t('View blog author profile'), profile2_page_get_base_path($profile_type) . '/' . $account->uid),
+      '#weight' => 10,
+    );
+  }
+}
+
+/**
  * Implements hook_views_post_execute().
  */
 function ombublog_views_post_execute(&$view) {
