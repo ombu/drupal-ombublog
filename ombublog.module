@@ -406,48 +406,93 @@ function ombublog_form_views_exposed_form_alter(&$form, $form_state) {
  */
 function ombublog_node_view($node, $view_mode, $langcode) {
   if ($node->type == 'blog_post') {
-    if ($view_mode != 'full') {
-      // Build blog links.
-      $links = array();
+    switch ($view_mode) {
+      case 'full':
+        // Add open graph tags.
+        $tags['og:title'] = $node->title;
+        $tags['og:type'] = 'blog';
+        $tags['og:url'] = url('node/' . $node->nid, array('absolute' => TRUE));
+        $tags['article:published_time'] = date('c', $node->created);
 
-      // Add comment links.
-      if (module_exists('comment')) {
-        if ($node->comment_count == 0) {
-          $links['comments'] = array(
-            'title' => 'Leave a Comment',
-            'href' => 'node/' . $node->nid,
-            'fragment' => 'comments',
-            'attributes' => array('class' => array('read-more')),
-          );
+        $wrapper = entity_metadata_wrapper('node', $node);
+
+        $tags['og:description'] = $wrapper->body->summary->value();
+
+        if (!empty($wrapper->field_image)) {
+          $tags['og:image'] = url(file_create_url($wrapper->field_image->value()['uri'], array('absolute' => TRUE)));
+        }
+
+        if (!empty($wrapper->field_authors)) {
+          foreach ($wrapper->field_authors as $author) {
+            $authors[] = entity_label('profile2', $author->value());
+          }
+
+          if (count($authors) > 1) {
+            $authors[] = 'and ' . array_pop($authors);
+          }
+          $authors = count($authors) > 2 ? implode(', ', $authors) : implode(' ', $authors);
         }
         else {
-          $links['comments'] = array(
-            'title' => 'Comments (' . $node->comment_count . ')',
-            'href' => 'node/' . $node->nid,
-            'fragment' => 'comments',
-            'attributes' => array('class' => array('read-more')),
+          $authors = $node->name;
+        }
+        $tags['article:author'] = $authors;
+
+        foreach ($tags as $tag => $data) {
+          drupal_add_html_head(array(
+            '#tag' => 'meta',
+            '#attributes' => array(
+              'property' => $tag,
+              'content' => $data,
+            ),
+          ), $tag);
+        }
+
+        break;
+
+      case 'rss':
+        // Add read more link for rss feeds.
+        $link['node'] = array(
+          'title' => t('Continue reading !title »', array(
+            '!title' => $node->title,
+          )),
+          'href' => 'node/' . $node->nid,
+        );
+
+        $node->content['links']['node']['#links'] = $link;
+        break;
+
+      default:
+        // Build blog links.
+        $links = array();
+
+        // Add comment links.
+        if (module_exists('comment')) {
+          if ($node->comment_count == 0) {
+            $links['comments'] = array(
+              'title' => 'Leave a Comment',
+              'href' => 'node/' . $node->nid,
+              'fragment' => 'comments',
+              'attributes' => array('class' => array('read-more')),
+            );
+          }
+          else {
+            $links['comments'] = array(
+              'title' => 'Comments (' . $node->comment_count . ')',
+              'href' => 'node/' . $node->nid,
+              'fragment' => 'comments',
+              'attributes' => array('class' => array('read-more')),
+            );
+          }
+        }
+
+        if ($links) {
+          $node->content['links']['blog'] = array(
+            '#theme' => 'links__node__blog',
+            '#links' => $links,
+            '#attributes' => array('class' => array('links', 'inline')),
           );
         }
-      }
-
-      if ($links) {
-        $node->content['links']['blog'] = array(
-          '#theme' => 'links__node__blog',
-          '#links' => $links,
-          '#attributes' => array('class' => array('links', 'inline')),
-        );
-      }
-    }
-    if ($view_mode == 'rss') {
-      // Add read more link for rss feeds.
-      $link['node'] = array(
-        'title' => t('Continue reading !title »', array(
-          '!title' => $node->title,
-        )),
-        'href' => 'node/' . $node->nid,
-      );
-
-      $node->content['links']['node']['#links'] = $link;
+        break;
     }
   }
 
