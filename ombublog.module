@@ -424,7 +424,8 @@ function ombublog_node_view($node, $view_mode, $langcode) {
         $tags['og:description'] = $wrapper->body->summary->value();
 
         if (!empty($wrapper->field_image)) {
-          $tags['og:image'] = url(file_create_url($wrapper->field_image->value()['uri'], array('absolute' => TRUE)));
+          $image = $wrapper->field_image->value();
+          $tags['og:image'] = url(file_create_url($image['uri'], array('absolute' => TRUE)));
         }
 
         if (!empty($wrapper->field_authors)) {
