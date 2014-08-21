@@ -18,6 +18,10 @@ function ombublog_install() {
     'multiple_authors_field' => 'field_authors',
   ));
 
+  // Add settings for pathauto entity.
+  variable_set('pathauto_profile2_blog_author_pattern', 'blog/author/[profile2:field_display_name]');
+  variable_set('pathauto_entity_available_entity_types', array('profile2' => 'profile2'));
+
   ombublog_setup_content_type();
   ombublog_setup_fields();
 }
