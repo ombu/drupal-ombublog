@@ -319,10 +319,15 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
     '#size' => 30,
   );
   $form['basic']['inline']['keys']['#attributes']['placeholder'] = 'Search the blog';
-  // processed_keys is used to coordinate keyword passing between other forms
+
+  // Processed_keys is used to coordinate keyword passing between other forms
   // that hook into the basic search form.
   $form['basic']['inline']['processed_keys'] = array('#type' => 'value', '#value' => array());
-  $form['basic']['inline']['submit'] = array('#markup' => '<button type="submit"><span>' . t('Search Blog') . '</span>');
+
+  $form['basic']['inline']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Search Blog',
+  );
 
   return $form;
 }
@@ -419,7 +424,8 @@ function ombublog_node_view($node, $view_mode, $langcode) {
         $tags['og:description'] = $wrapper->body->summary->value();
 
         if (!empty($wrapper->field_image)) {
-          $tags['og:image'] = url(file_create_url($wrapper->field_image->value()['uri'], array('absolute' => TRUE)));
+          $image = $wrapper->field_image->value();
+          $tags['og:image'] = url(file_create_url($image['uri'], array('absolute' => TRUE)));
         }
 
         if (!empty($wrapper->field_authors)) {
