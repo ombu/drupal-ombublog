@@ -429,6 +429,7 @@ function ombublog_node_view($node, $view_mode, $langcode) {
         }
 
         if (!empty($wrapper->field_authors)) {
+          $authors = array();
           foreach ($wrapper->field_authors as $author) {
             $authors[] = entity_label('profile2', $author->value());
           }
