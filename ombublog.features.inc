@@ -47,7 +47,7 @@ function ombublog_flag_default_flags() {
       'full' => TRUE,
     ),
     'show_as_field' => FALSE,
-    'show_on_form' => 0,
+    'show_on_form' => 1,
     'access_author' => '',
     'show_contextual_link' => FALSE,
     'i18n' => 0,
