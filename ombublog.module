@@ -59,7 +59,7 @@ function ombublog_menu() {
     'description' => 'Configuration for sitewide blog',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ombublog_settings_form'),
-    'access arguments' => array('administer ombublog'),
+    'access arguments' => array('administer ombublogs'),
     'file' => 'ombublog.admin.inc',
   );
 
