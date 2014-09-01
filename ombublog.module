@@ -707,9 +707,10 @@ QUERY;
   $current_date = time();
   while ($start_date < $current_date) {
     $key = date('Y-m', $start_date);
+    $key_search = date('Y-n', $start_date);
     $options[date('Y', $start_date)][$key] = array(
       '!month' => date('F', $start_date),
-      '!count' => isset($results[$key]) ? $results[$key] : 0,
+      '!count' => isset($results[$key_search]) ? $results[$key_search] : 0,
     );
     $start_date = strtotime(date('m/d/Y', $start_date) . ' + 1 month');
   }
