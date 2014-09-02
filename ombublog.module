@@ -722,7 +722,7 @@ QUERY;
 
   return array(
     '#theme' => 'ombublog_archive_list',
-    '#options' => $options,
+    '#options' => array('' => t('Select a Date')) + $options,
   );
 }
 
