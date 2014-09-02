@@ -722,7 +722,7 @@ QUERY;
 
   return array(
     '#theme' => 'ombublog_archive_list',
-    '#options' => array('' => t('Select a Date')) + $options,
+    '#options' => $options,
   );
 }
 
@@ -737,6 +737,7 @@ function theme_ombublog_archive_list($variables) {
   // Build up select list. Can't use theme_select() since there's no support for
   // disabling options, which is needed for options without blog posts.
   $output = '<select name="blog-archive">';
+  $output .= '<option value="">Select a Date</option>';
   foreach ($variables['options'] as $year => $months) {
     $output .= '<optgroup label="' . $year . '">';
 
