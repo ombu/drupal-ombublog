@@ -715,6 +715,8 @@ QUERY;
     $start_date = strtotime(date('m/d/Y', $start_date) . ' + 1 month');
   }
 
+  $options = array_reverse($options, TRUE);
+
   return array(
     '#theme' => 'ombublog_archive_list',
     '#options' => $options,
