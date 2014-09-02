@@ -715,6 +715,9 @@ QUERY;
     $start_date = strtotime(date('m/d/Y', $start_date) . ' + 1 month');
   }
 
+  foreach ($options as $key => $option) {
+    $options[$key] = array_reverse($option, TRUE);
+  }
   $options = array_reverse($options, TRUE);
 
   return array(
