@@ -375,10 +375,7 @@ function ombublog_profile2_label($profile) {
  * Implements hook_form_alter().
  */
 function ombublog_form_alter(&$form, $form_state, $form_id) {
-  // Hide the path tab for blog posts.
-  if ($form_id == 'blog_post_node_form') {
-    $form['path']['#access'] = FALSE;
-  }
+
 }
 
 /**
