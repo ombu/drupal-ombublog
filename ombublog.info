@@ -13,6 +13,7 @@ dependencies[] = field_group
 dependencies[] = flag
 dependencies[] = image
 dependencies[] = media
+dependencies[] = pathauto_entity
 dependencies[] = ombuslide
 dependencies[] = options
 dependencies[] = pathauto

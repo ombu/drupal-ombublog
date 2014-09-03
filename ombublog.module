@@ -59,7 +59,7 @@ function ombublog_menu() {
     'description' => 'Configuration for sitewide blog',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ombublog_settings_form'),
-    'access arguments' => array('administer ombublog'),
+    'access arguments' => array('administer ombublogs'),
     'file' => 'ombublog.admin.inc',
   );
 
@@ -429,6 +429,7 @@ function ombublog_node_view($node, $view_mode, $langcode) {
         }
 
         if (!empty($wrapper->field_authors)) {
+          $authors = array();
           foreach ($wrapper->field_authors as $author) {
             $authors[] = entity_label('profile2', $author->value());
           }
@@ -705,13 +706,19 @@ QUERY;
   ))->fetchField();
   $current_date = time();
   while ($start_date < $current_date) {
-    $key = date('Y-n', $start_date);
+    $key = date('Y-m', $start_date);
+    $key_search = date('Y-n', $start_date);
     $options[date('Y', $start_date)][$key] = array(
       '!month' => date('F', $start_date),
-      '!count' => isset($results[$key]) ? $results[$key] : 0,
+      '!count' => isset($results[$key_search]) ? $results[$key_search] : 0,
     );
     $start_date = strtotime(date('m/d/Y', $start_date) . ' + 1 month');
   }
+
+  foreach ($options as $key => $option) {
+    $options[$key] = array_reverse($option, TRUE);
+  }
+  $options = array_reverse($options, TRUE);
 
   return array(
     '#theme' => 'ombublog_archive_list',
@@ -730,6 +737,7 @@ function theme_ombublog_archive_list($variables) {
   // Build up select list. Can't use theme_select() since there's no support for
   // disabling options, which is needed for options without blog posts.
   $output = '<select name="blog-archive">';
+  $output .= '<option value="">Select a Date</option>';
   foreach ($variables['options'] as $year => $months) {
     $output .= '<optgroup label="' . $year . '">';
 

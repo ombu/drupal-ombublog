@@ -760,19 +760,6 @@ function ombublog_views_default_views() {
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   $handler->display->display_options['path'] = 'blog/search';
 
-  /* Display: Feed */
-  $handler = $view->new_display('feed', 'Feed', 'ombublog_feed');
-  $handler->display->display_options['pager']['type'] = 'some';
-  $handler->display->display_options['style_plugin'] = 'rss';
-  $handler->display->display_options['row_plugin'] = 'node_rss';
-  $handler->display->display_options['row_options']['item_length'] = 'rss';
-  $handler->display->display_options['row_options']['links'] = TRUE;
-  $handler->display->display_options['path'] = 'blog/search/feed';
-  $handler->display->display_options['displays'] = array(
-    'ombublog_listing' => 'ombublog_listing',
-    'default' => 0,
-  );
-  $handler->display->display_options['sitename_title'] = 1;
   $export['ombublog'] = $view;
 
   $view = new view();
