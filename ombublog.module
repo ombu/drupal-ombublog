@@ -469,14 +469,14 @@ function ombublog_node_view($node, $view_mode, $langcode) {
 
       case 'rss':
         // Add read more link for rss feeds.
-        $link['node'] = array(
+        $link = array(
           'title' => t('Continue reading !title »', array(
             '!title' => $node->title,
           )),
           'href' => 'node/' . $node->nid,
         );
 
-        $node->content['links']['node']['#links'] = $link;
+        $node->content['links']['node']['#links']['node'] = $link;
         break;
 
       default:
