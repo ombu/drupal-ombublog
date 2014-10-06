@@ -18,11 +18,15 @@ include_once 'ombublog.features.inc';
 /**
  * Base url stem for blog functionality
  */
-define('OMBUBLOG_BASE_PATH', 'blog');
+define('OMBUBLOG_BASE_PATH', 'blog/');
 
 /**
  * Module Hooks
  */
+
+function ombublog_base_path() {
+  return variable_get('ombublog_base_path', OMBUBLOG_BASE_PATH);
+}
 
 /**
  * Implements hook_init().
@@ -32,14 +36,14 @@ function ombublog_init() {
   $item = menu_get_item();
   if ($item['path'] == 'taxonomy/term/%' && $term = menu_get_object('taxonomy_term', 2)) {
     if ($term->vocabulary_machine_name == variable_get('ombublog_category_vocabulary', '') && variable_get('ombublog_category_redirect', 0)) {
-      drupal_goto(OMBUBLOG_BASE_PATH . '/search', array(
+      drupal_goto(ombublog_base_path() . 'search', array(
         'query' => array(
           'category' => $term->tid,
         ),
       ));
     }
     if ($term->vocabulary_machine_name == variable_get('ombublog_tags_vocabulary', '') && variable_get('ombublog_tags_redirect', 1)) {
-      drupal_goto(OMBUBLOG_BASE_PATH . '/search', array(
+      drupal_goto(ombublog_base_path() . 'search', array(
         'query' => array(
           'tags' => array($term->tid),
         ),
@@ -63,15 +67,7 @@ function ombublog_menu() {
     'file' => 'ombublog.admin.inc',
   );
 
-  $items[OMBUBLOG_BASE_PATH . '/%/search'] = array(
-    'title' => 'Blog',
-    'page callback' => 'ombublog_search_view',
-    'page arguments' => array(1, 3),
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-
-  $items[OMBUBLOG_BASE_PATH . 'author/autocomplete'] = array(
+  $items[ombublog_base_path() . 'author/autocomplete'] = array(
     'title' => 'Blog author autocomplete',
     'page callback' => 'ombublog_author_autocomplete',
     'access arguments' => array('access contnet'),
@@ -348,7 +344,7 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
  */
 function ombublog_search_form_submit($form, &$form_state) {
   $form_state['redirect'] = array(
-    base_path() . OMBUBLOG_BASE_PATH . '/search',
+    base_path() . ombublog_base_path() . 'search',
     array(
       'query' => array(
         'keys' => $form_state['values']['keys'],

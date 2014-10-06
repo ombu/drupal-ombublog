@@ -10,7 +10,7 @@
  */
 function ombublog_install() {
   // Set pathauto pattern for blog posts and tags.
-  variable_set('pathauto_node_blog_post_pattern', 'blog/[node:created:custom:Y]/[node:created:custom:m]/[node:created:custom:d]/[node:title]');
+  variable_set('pathauto_node_blog_post_pattern', ombublog_base_path() . '[node:created:custom:Y]/[node:created:custom:m]/[node:created:custom:d]/[node:title]');
 
   variable_set("customauthor_blog_post", array (
     'enabled' => 1,
@@ -19,7 +19,7 @@ function ombublog_install() {
   ));
 
   // Add settings for pathauto entity.
-  variable_set('pathauto_profile2_blog_author_pattern', 'blog/author/[profile2:field_display_name]');
+  variable_set('pathauto_profile2_blog_author_pattern', ombublog_base_path() . 'author/[profile2:field_display_name]');
   variable_set('pathauto_entity_available_entity_types', array('profile2' => 'profile2'));
 
   ombublog_setup_content_type();

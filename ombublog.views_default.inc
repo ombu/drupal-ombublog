@@ -758,7 +758,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['title'] = 'All articles';
   $handler->display->display_options['exposed_block'] = TRUE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  $handler->display->display_options['path'] = 'blog/search';
+  $handler->display->display_options['path'] = ombublog_base_path() . 'search';
 
   $export['ombublog'] = $view;
 
@@ -887,7 +887,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['row_plugin'] = 'node_rss';
   $handler->display->display_options['row_options']['item_length'] = 'rss';
   $handler->display->display_options['row_options']['links'] = TRUE;
-  $handler->display->display_options['path'] = 'blog/feed';
+  $handler->display->display_options['path'] = ombublog_base_path() . 'feed';
   $handler->display->display_options['sitename_title'] = 1;
   $export['ombublog_feed'] = $view;
 

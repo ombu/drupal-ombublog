@@ -66,13 +66,16 @@ function ombublog_flag_default_flags() {
  */
 function ombublog_default_profile2_type() {
   $items = array();
+
+  $author_path = str_replace('/' , '\\/', ombublog_base_path() . 'author');
+
   $items['blog_author'] = entity_import('profile2_type', '{
     "userCategory" : true,
     "userView" : false,
     "type" : "blog_author",
     "label" : "Blog author",
     "weight" : "0",
-    "data" : { "registration" : 0, "use_page" : 1, "page_path" : "blog\\/author" },
+    "data" : { "registration" : 0, "use_page" : 1, "page_path" : "' . $author_path . '" },
     "rdf_mapping" : []
   }');
   return $items;
