@@ -344,7 +344,7 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
  */
 function ombublog_search_form_submit($form, &$form_state) {
   $form_state['redirect'] = array(
-    base_path() . ombublog_base_path() . 'search',
+    ombublog_base_path() . 'search',
     array(
       'query' => array(
         'keys' => $form_state['values']['keys'],
