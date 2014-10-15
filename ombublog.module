@@ -593,7 +593,7 @@ function ombublog_views_post_execute(&$view) {
 
     // Anonymous function to format a filter link.
     $filter_link_formatter = function($label, $query) {
-      return l($label . '&nbsp;<strong class="remove-filter"><span>' . t('(Remove filter)') . '</span></strong>', current_path(), array(
+      return l($label . '&nbsp;<strong class="remove-filter"><span></span></strong>', current_path(), array(
         'query' => $query,
         'html' => TRUE,
         'attributes' => array(
