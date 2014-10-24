@@ -205,7 +205,7 @@ function ombublog_permissions() {
  * Implements hook_module_implements_alter().
  */
 function ombublog_module_implements_alter(&$implementations, $hook) {
-  if (in_array($hook, array('form_alter', 'profile2_type_load'))) {
+  if (in_array($hook, array('profile2_type_load'))) {
     $group = $implementations['ombublog'];
     unset($implementations['ombublog']);
     $implementations['ombublog'] = $group;
