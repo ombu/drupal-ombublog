@@ -418,7 +418,10 @@ function ombublog_node_view($node, $view_mode, $langcode) {
 
         $wrapper = entity_metadata_wrapper('node', $node);
 
-        $tags['og:description'] = $wrapper->body->summary->value();
+        $body = $wrapper->body->value();
+        if (isset($body)) {
+          $tags['og:description'] = $wrapper->body->summary->value();
+        }
 
         if (!empty($wrapper->field_image)) {
           $image = $wrapper->field_image->value();
