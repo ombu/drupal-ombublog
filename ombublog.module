@@ -420,7 +420,7 @@ function ombublog_node_view($node, $view_mode, $langcode) {
 
         $body = $wrapper->body->value();
         if (isset($body)) {
-          $tags['og:description'] = $wrapper->body->summary->value();
+          $tags['og:description'] = strip_tags($wrapper->body->summary->value());
         }
 
         if (!empty($wrapper->field_image)) {
