@@ -326,7 +326,7 @@ function ombublog_field_default_field_instances() {
 
 
   // Load up blog category in order to label field accordingly.
-  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_blog_vocabulary', ''));
+  $vocab = taxonomy_vocabulary_machine_name_load(variable_get('ombublog_category_vocabulary', ''));
 
   // Exported field_instance: 'node-blog_post-field_blog'
   $field_instances['node-blog_post-field_blog'] = array(

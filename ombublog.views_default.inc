@@ -763,7 +763,7 @@ function ombublog_views_default_views() {
   $handler->display->display_options['title'] = 'All articles';
   $handler->display->display_options['exposed_block'] = TRUE;
   $handler->display->display_options['defaults']['arguments'] = FALSE;
-  $handler->display->display_options['path'] = ombublog_base_path() . 'search';
+  $handler->display->display_options['path'] = ombublog_search_path();
 
   $export['ombublog'] = $view;
 

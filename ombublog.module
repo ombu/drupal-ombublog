@@ -28,6 +28,10 @@ function ombublog_base_path() {
   return variable_get('ombublog_base_path', OMBUBLOG_BASE_PATH);
 }
 
+function ombublog_search_path() {
+  return variable_get('ombublog_search_path', ombublog_base_path() . 'search');
+}
+
 /**
  * Implements hook_init().
  */
@@ -36,14 +40,14 @@ function ombublog_init() {
   $item = menu_get_item();
   if ($item['path'] == 'taxonomy/term/%' && $term = menu_get_object('taxonomy_term', 2)) {
     if ($term->vocabulary_machine_name == variable_get('ombublog_category_vocabulary', '') && variable_get('ombublog_category_redirect', 0)) {
-      drupal_goto(ombublog_base_path() . 'search', array(
+      drupal_goto(ombublog_search_path(), array(
         'query' => array(
           'category' => $term->tid,
         ),
       ));
     }
     if ($term->vocabulary_machine_name == variable_get('ombublog_tags_vocabulary', '') && variable_get('ombublog_tags_redirect', 1)) {
-      drupal_goto(ombublog_base_path() . 'search', array(
+      drupal_goto(ombublog_search_path(), array(
         'query' => array(
           'tags' => array($term->tid),
         ),
@@ -176,6 +180,8 @@ function ombublog_node_info() {
       'help' => '',
     ),
   );
+
+  drupal_alter('node_info', $items);
   return $items;
 }
 
@@ -344,7 +350,7 @@ function ombublog_search_form($form, &$form_state, $keys = '') {
  */
 function ombublog_search_form_submit($form, &$form_state) {
   $form_state['redirect'] = array(
-    ombublog_base_path() . 'search',
+    ombublog_search_path(),
     array(
       'query' => array(
         'keys' => $form_state['values']['keys'],
