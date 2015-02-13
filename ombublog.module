@@ -762,7 +762,7 @@ function theme_ombublog_archive_list($variables) {
 }
 
 function _ombublog_block_get_rss_feed() {
-  return l(t('RSS'), ombublog_get_base_url() . '/feed', array(
+  return l(t('RSS'), ombublog_base_path() . 'feed', array(
     'attributes' => array(
       'class' => 'rss-icon',
       'title' => 'RSS Feed',
