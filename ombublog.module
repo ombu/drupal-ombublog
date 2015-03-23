@@ -462,6 +462,11 @@ QUERY;
       );
       $form['submit']['#weight'] = 1;
     }
+
+    // Hide clear filters if no filters are selected.
+    if (empty($form_state['view']->exposed_input)) {
+      $form['reset']['#access'] = FALSE;
+    }
   }
 }
 
@@ -724,7 +729,7 @@ function ombublog_views_post_execute(&$view) {
       ));
     }
 
-    if (!empty($input['date_filter']['value'])) {
+    if (!empty($input['date_filter']['value']['date'])) {
       $query = $input;
       unset($query['date_filter']);
       $date = new DateObject($input['date_filter']['value']['date'], date_default_timezone(), 'm/Y');
