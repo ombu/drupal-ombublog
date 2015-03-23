@@ -724,7 +724,7 @@ function ombublog_views_post_execute(&$view) {
       ));
     }
 
-    if (!empty($input['date_filter'])) {
+    if (!empty($input['date_filter']['value'])) {
       $query = $input;
       unset($query['date_filter']);
       $date = new DateObject($input['date_filter']['value']['date'], date_default_timezone(), 'm/Y');
