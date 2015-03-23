@@ -389,6 +389,7 @@ function ombublog_profile2_label($profile) {
  */
 function ombublog_form_views_exposed_form_alter(&$form, $form_state) {
   if ($form_state['view']->name == 'ombublog' && $form_state['view']->current_display == 'ombublog_listing') {
+    // Format author field as a select list.
     if (isset($form['field_authors_target_id'])) {
       $pids = db_query("SELECT pid FROM {profile} WHERE type = :type", array(
         ':type' => 'blog_author',
@@ -405,6 +406,61 @@ function ombublog_form_views_exposed_form_alter(&$form, $form_state) {
           '#default_value' => $form['field_authors_target_id']['#default_value'],
         );
       }
+    }
+
+    // Format date filter if present.
+    if (isset($form['date_filter'])) {
+      $year = 'YEAR(FROM_UNIXTIME(n.created))';
+      $month = 'MONTH(FROM_UNIXTIME(n.created))';
+      $query = <<<QUERY
+SELECT DATE_FORMAT(FROM_UNIXTIME(n.created), '%m/%Y') as date,
+COUNT(*) AS count
+FROM {node} n
+WHERE
+n.type = :type AND
+n.status <> 0
+GROUP BY $year, $month
+ORDER BY
+$year DESC,
+$month ASC
+QUERY;
+      $results = db_query($query, array(':type' => 'blog_post'))->fetchAllKeyed();
+
+      // Build up a list of options for all available months between first
+      // post and now.
+      $start_date = db_query('SELECT MIN(created) FROM {node} WHERE type = :type', array(
+        ':type' => 'blog_post',
+      ))->fetchField();
+      $current_date = time();
+      while ($start_date < $current_date) {
+        $key = date('m/Y', $start_date);
+        $options[date('Y', $start_date)][$key] = t('!month (!count)', array(
+          '!month' => date('F', $start_date),
+          '!count' => isset($results[$key]) ? $results[$key] : 0,
+        ));
+        $start_date = strtotime(date('m/d/Y', $start_date) . ' + 1 month');
+      }
+      foreach ($options as $key => $option) {
+        $options[$key] = array_reverse($option, TRUE);
+      }
+      $options = array_reverse($options, TRUE);
+      $form['date_filter']['value'] = array(
+        // Create dummy date values so date_text_validate() works correctly.
+        '#type' => 'container',
+        '#value' => array(),
+        '#date_format' => 'm/Y',
+        '#date_timezone' => date_default_timezone(),
+        '#date_flexible' => 0,
+        '#date_increment' => 1,
+        'date' => array(
+          '#type' => 'select',
+          '#options' => array('' => t('Select a Date')) + $options,
+          '#description' => '',
+          '#weight' => -10,
+        ),
+        '#element_validate' => array('date_text_validate'),
+      );
+      $form['submit']['#weight'] = 1;
     }
   }
 }
@@ -665,6 +721,15 @@ function ombublog_views_post_execute(&$view) {
       }
       $filters[] = t('tagged !terms', array(
         '!terms' => $term_formatter('tags', $terms, $vocab),
+      ));
+    }
+
+    if (!empty($input['date_filter'])) {
+      $query = $input;
+      unset($query['date_filter']);
+      $date = new DateObject($input['date_filter']['value']['date'], date_default_timezone(), 'm/Y');
+      $filters[] = t('published in !date', array(
+        '!date' => $filter_link_formatter($date->format('F Y'), $query),
       ));
     }
 

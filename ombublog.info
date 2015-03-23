@@ -5,6 +5,7 @@ package = OMBU
 version = 7.x-0.1
 project = ombublog
 dependencies[] = ctools
+dependencies[] = date_views
 dependencies[] = entity
 dependencies[] = entity_token
 dependencies[] = entityreference
