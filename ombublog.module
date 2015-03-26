@@ -392,7 +392,7 @@ function ombublog_form_views_exposed_form_alter(&$form, $form_state) {
         foreach ($profiles as $profile) {
           $options[$profile->pid] = entity_label('profile2', $profile);
         }
-
+        asort($options);
         $form['field_authors_target_id'] = array(
           '#type' => 'select',
           '#options' => array('' => t('- Any -')) + $options,
