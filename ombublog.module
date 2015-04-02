@@ -389,10 +389,18 @@ function ombublog_form_views_exposed_form_alter(&$form, $form_state) {
       ))->fetchCol();
       $profiles = profile2_load_multiple($pids);
       if ($profiles) {
+        // Get last name and pid of each user.
         foreach ($profiles as $profile) {
-          $options[$profile->pid] = entity_label('profile2', $profile);
+          $wrapper = entity_metadata_wrapper('profile2', $profile);
+          $options[$profile->pid] = $wrapper->field_last_name->value();
         }
+        // Sort based on value which is last name.
         asort($options);
+        // Run back through options after alphabetical sort by last name and
+        // give each option full name.
+        foreach ($options as $key => $value) {
+          $options[$key] = entity_label('profile2', $profiles[$key]);
+        }
         $form['field_authors_target_id'] = array(
           '#type' => 'select',
           '#options' => array('' => t('- Any -')) + $options,
