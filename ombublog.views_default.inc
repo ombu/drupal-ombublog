@@ -740,22 +740,6 @@ function ombublog_views_default_views() {
   );
   $handler->display->display_options['filters']['field_blog_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_blog_tid']['vocabulary'] = 'channel';
-  /* Filter criterion: Content: Other authors (field_authors) */
-  $handler->display->display_options['filters']['field_authors_target_id']['id'] = 'field_authors_target_id';
-  $handler->display->display_options['filters']['field_authors_target_id']['table'] = 'field_data_field_authors';
-  $handler->display->display_options['filters']['field_authors_target_id']['field'] = 'field_authors_target_id';
-  $handler->display->display_options['filters']['field_authors_target_id']['exposed'] = TRUE;
-  $handler->display->display_options['filters']['field_authors_target_id']['expose']['operator_id'] = 'field_authors_target_id_op';
-  $handler->display->display_options['filters']['field_authors_target_id']['expose']['label'] = 'Author';
-  $handler->display->display_options['filters']['field_authors_target_id']['expose']['operator'] = 'field_authors_target_id_op';
-  $handler->display->display_options['filters']['field_authors_target_id']['expose']['identifier'] = 'field_authors_target_id';
-  $handler->display->display_options['filters']['field_authors_target_id']['expose']['remember_roles'] = array(
-    2 => '2',
-    1 => 0,
-    3 => 0,
-    4 => 0,
-    5 => 0,
-  );
 
   /* Display: Blog listing */
   $handler = $view->new_display('page', 'Blog listing', 'ombublog_listing');
