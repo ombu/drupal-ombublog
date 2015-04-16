@@ -743,7 +743,7 @@ function ombublog_views_post_execute(&$view) {
         $filters[] = ' <span>and</span> ' . array_pop($filters);
       }
 
-      $view->set_title(t('<h3>Articles !filters</h3>', array(
+      $view->set_title(t('Articles !filters', array(
         '!filters' => count($filters) > 2 ? implode(', ', $filters) : implode(' ', $filters),
       )));
     }
