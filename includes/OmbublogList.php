@@ -158,11 +158,11 @@ class OmbublogList extends BeanPlugin {
     );
 
 
-    $form['pager'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Show pager?'),
-      '#default_value' => $bean->pager,
-    );
+    // $form['pager'] = array(
+    //   '#type' => 'checkbox',
+    //   '#title' => t('Show pager?'),
+    //   '#default_value' => $bean->pager,
+    // );
 
     return $form;
   }
@@ -255,7 +255,8 @@ class OmbublogList extends BeanPlugin {
     }
 
     if ($bean->pager) {
-      $query->pager($bean->count);
+      $query = $query->extend('PagerDefault');
+      $query->limit($bean->limit);
       $content['bean'][$bean->delta]['pager'] = array(
         '#theme' => 'pager',
         '#weight' => 10,
