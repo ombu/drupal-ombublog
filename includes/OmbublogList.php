@@ -198,14 +198,16 @@ class OmbublogList extends BeanPlugin {
   public function view($bean, $content, $view_mode = 'default', $langcode = NULL) {
     $query = $this->getQuery($bean);
 
-    $results = $query->execute()->fetchCol();
-    if ($results) {
-      $nodes = node_load_multiple($results);
-      $content['bean'][$bean->delta]['#nodes'] = $nodes;
+    if ($query) {
+      $results = $query->execute()->fetchCol();
+      if ($results) {
+        $nodes = node_load_multiple($results);
+        $content['bean'][$bean->delta]['#nodes'] = $nodes;
 
-      // Let any bean styles alter content.
-      if (module_exists('bean_style')) {
-        bean_style_view_alter($content, $bean);
+        // Let any bean styles alter content.
+        if (module_exists('bean_style')) {
+          bean_style_view_alter($content, $bean);
+        }
       }
     }
 
@@ -255,8 +257,8 @@ class OmbublogList extends BeanPlugin {
     }
 
     if ($bean->pager) {
-      $query = $query->extend('PagerDefault');
-      $query->limit($bean->limit);
+      $query->extend('PagerDefault')
+        ->limit($bean->limit);
       $content['bean'][$bean->delta]['pager'] = array(
         '#theme' => 'pager',
         '#weight' => 10,
