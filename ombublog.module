@@ -40,14 +40,14 @@ function ombublog_init() {
         'query' => array(
           'category' => $term->tid,
         ),
-      ));
+      ), 301);
     }
     if ($term->vocabulary_machine_name == variable_get('ombublog_tags_vocabulary', '') && variable_get('ombublog_tags_redirect', 1)) {
       drupal_goto(ombublog_base_path() . 'search', array(
         'query' => array(
           'tags' => array($term->tid),
         ),
-      ));
+      ), 301);
     }
   }
 }
